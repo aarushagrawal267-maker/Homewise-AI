@@ -1,0 +1,228 @@
+{
+  "overview": {
+    "train_records": 1460,
+    "test_records": 1459,
+    "n_features": 79,
+    "n_numerical": 35,
+    "n_categorical": 44,
+    "missing_cells_train": 7829,
+    "columns_with_missing_train": 19,
+    "duplicate_records_train": 0
+  },
+  "target": {
+    "mean": 180921.19589041095,
+    "median": 163000.0,
+    "min": 34900.0,
+    "max": 755000.0,
+    "std": 79442.50288288662,
+    "q1": 129975.0,
+    "q3": 214000.0,
+    "iqr": 84025.0,
+    "skewness": 1.8828757597682129,
+    "kurtosis": 6.536281860064529,
+    "log_skewness": 0.12134661989685329
+  },
+  "top_correlations": {
+    "OverallQual": 0.7909816005838053,
+    "GrLivArea": 0.7086244776126515,
+    "GarageCars": 0.6404091972583519,
+    "GarageArea": 0.6234314389183622,
+    "TotalBsmtSF": 0.6135805515591943,
+    "1stFlrSF": 0.6058521846919153,
+    "FullBath": 0.5606637627484453,
+    "TotRmsAbvGrd": 0.5337231555820284,
+    "YearBuilt": 0.5228973328794967,
+    "YearRemodAdd": 0.5071009671113866,
+    "GarageYrBlt": 0.4863616774878596,
+    "MasVnrArea": 0.47749304709571444,
+    "Fireplaces": 0.46692883675152763,
+    "BsmtFinSF1": 0.3864198062421535,
+    "LotFrontage": 0.35179909657067737
+  },
+  "missing": [
+    {
+      "column": "PoolQC",
+      "missing": 1453,
+      "percent": 99.52
+    },
+    {
+      "column": "MiscFeature",
+      "missing": 1406,
+      "percent": 96.3
+    },
+    {
+      "column": "Alley",
+      "missing": 1369,
+      "percent": 93.77
+    },
+    {
+      "column": "Fence",
+      "missing": 1179,
+      "percent": 80.75
+    },
+    {
+      "column": "MasVnrType",
+      "missing": 872,
+      "percent": 59.73
+    },
+    {
+      "column": "FireplaceQu",
+      "missing": 690,
+      "percent": 47.26
+    },
+    {
+      "column": "LotFrontage",
+      "missing": 259,
+      "percent": 17.74
+    },
+    {
+      "column": "GarageType",
+      "missing": 81,
+      "percent": 5.55
+    },
+    {
+      "column": "GarageYrBlt",
+      "missing": 81,
+      "percent": 5.55
+    },
+    {
+      "column": "GarageFinish",
+      "missing": 81,
+      "percent": 5.55
+    },
+    {
+      "column": "GarageQual",
+      "missing": 81,
+      "percent": 5.55
+    },
+    {
+      "column": "GarageCond",
+      "missing": 81,
+      "percent": 5.55
+    },
+    {
+      "column": "BsmtExposure",
+      "missing": 38,
+      "percent": 2.6
+    },
+    {
+      "column": "BsmtFinType2",
+      "missing": 38,
+      "percent": 2.6
+    },
+    {
+      "column": "BsmtQual",
+      "missing": 37,
+      "percent": 2.53
+    },
+    {
+      "column": "BsmtCond",
+      "missing": 37,
+      "percent": 2.53
+    },
+    {
+      "column": "BsmtFinType1",
+      "missing": 37,
+      "percent": 2.53
+    },
+    {
+      "column": "MasVnrArea",
+      "missing": 8,
+      "percent": 0.55
+    },
+    {
+      "column": "Electrical",
+      "missing": 1,
+      "percent": 0.07
+    }
+  ],
+  "outliers": {
+    "iqr_upper_fence": 340037.5,
+    "iqr_lower_fence": 3937.5,
+    "n_above_fence": 61,
+    "n_below_fence": 0,
+    "n_log_z_gt_3": 12,
+    "large_low_price_ids": [
+      524,
+      1299
+    ],
+    "large_low_price_rows": [
+      {
+        "Id": 524,
+        "GrLivArea": 4676,
+        "SalePrice": 184750,
+        "SaleCondition": "Partial"
+      },
+      {
+        "Id": 1299,
+        "GrLivArea": 5642,
+        "SalePrice": 160000,
+        "SaleCondition": "Partial"
+      }
+    ]
+  },
+  "insights": [
+    {
+      "question": "Does overall quality have a strong relationship with sale price?",
+      "answer": "Yes. Spearman correlation is 0.81. Median price rises from $50,150 at quality 1 to $432,390 at quality 10 (8.6\u00d7 higher).",
+      "metric": 0.8098285862017292
+    },
+    {
+      "question": "How does living area relate to historical sale prices?",
+      "answer": "Positively: Pearson r = 0.71. A simple linear fit implies about $10,713 per extra 100 sq ft, before accounting for any other factor.",
+      "metric": 0.7086244776126523
+    },
+    {
+      "question": "Are newer houses generally more expensive in this dataset?",
+      "answer": "Generally yes (Spearman 0.65). Homes built 2000 or later have a median of $223,750 versus $122,000 for homes built before 1950. Newer homes also tend to be larger and higher quality, so age alone does not explain the gap.",
+      "metric": 0.6526815462850586
+    },
+    {
+      "question": "How does garage capacity relate to property value?",
+      "answer": "Spearman 0.69. Median price by capacity \u2014 0 cars: $100,000 (n=81), 1 cars: $128,000 (n=369), 2 cars: $177,750 (n=824), 3 cars: $295,000 (n=181), 4 cars: $200,000 (n=5).",
+      "metric": 0.6907109670497434
+    },
+    {
+      "question": "Which neighborhoods have higher median historical sale prices?",
+      "answer": "Highest medians (\u226510 sales): NridgHt ($315,000), NoRidge ($301,500), StoneBr ($278,000). Lowest: BrDale ($106,000), IDOTRR ($103,000), MeadowV ($88,000).",
+      "metric": 3.5795454545454546
+    },
+    {
+      "question": "Which property characteristics show the strongest correlations with SalePrice?",
+      "answer": "Top numeric Pearson correlations: OverallQual (0.79), GrLivArea (0.71), GarageCars (0.64), GarageArea (0.62), TotalBsmtSF (0.61).",
+      "metric": 0.7909816005838053
+    },
+    {
+      "question": "What about skewness of the target?",
+      "answer": "SalePrice is right-skewed (skewness 1.88); after log1p the skewness is 0.12, which is why models are trained on log price.",
+      "metric": 1.8828757597682129
+    }
+  ],
+  "neighborhood_medians": {
+    "NridgHt": 315000.0,
+    "NoRidge": 301500.0,
+    "StoneBr": 278000.0,
+    "Timber": 228475.0,
+    "Somerst": 225500.0,
+    "Veenker": 218000.0,
+    "Crawfor": 200624.0,
+    "ClearCr": 200250.0,
+    "CollgCr": 197200.0,
+    "Blmngtn": 191000.0,
+    "NWAmes": 182900.0,
+    "Gilbert": 181000.0,
+    "SawyerW": 179900.0,
+    "Mitchel": 153500.0,
+    "NPkVill": 146000.0,
+    "NAmes": 140000.0,
+    "SWISU": 139500.0,
+    "Blueste": 137500.0,
+    "Sawyer": 135000.0,
+    "BrkSide": 124300.0,
+    "Edwards": 121750.0,
+    "OldTown": 119000.0,
+    "BrDale": 106000.0,
+    "IDOTRR": 103000.0,
+    "MeadowV": 88000.0
+  }
+}

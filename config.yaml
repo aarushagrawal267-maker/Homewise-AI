@@ -1,0 +1,66 @@
+# HomeWise AI — central configuration
+# All paths are relative to the project root.
+
+project:
+  name: HomeWise AI
+  tagline: Understand Property Value. Discover What Drives It. Make Smarter Housing Decisions.
+
+paths:
+  raw_data: data/raw
+  processed_data: data/processed
+  models: models
+  figures: outputs/figures
+  reports: outputs/reports
+  experiments: outputs/experiments
+
+data:
+  train_file: train.csv
+  test_file: test.csv
+  description_file: data_description.txt
+  target: SalePrice
+  id_column: Id
+  kaggle_competition: house-prices-advanced-regression-techniques
+  kaggle_url: https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques/data
+
+split:
+  random_seed: 42
+  validation_size: 0.2
+  cv_folds: 5
+
+preprocessing:
+  log_target: true
+  # Skewness threshold above which non-negative numeric features are log1p
+  # transformed for linear models only.
+  skew_threshold: 0.75
+  # Remove the two documented partial-sale outliers (GrLivArea > 4000 sq ft
+  # with SalePrice < $300k) from the TRAINING split only. The validation split
+  # is never filtered.
+  remove_training_outliers: true
+
+feature_engineering:
+  enabled: true
+
+tuning:
+  # Number of Optuna trials / random-search iterations per model.
+  # "quick" mode (python scripts/train_all.py --quick) divides these by 3.
+  ridge_alphas: [0.1, 0.3, 1, 3, 5, 10, 15, 20, 30, 50, 100]
+  lasso_alphas: [0.0001, 0.0002, 0.0003, 0.0005, 0.0007, 0.001, 0.002, 0.005]
+  decision_tree_grid:
+    max_depth: [4, 6, 8, 10, 12, null]
+    min_samples_leaf: [1, 3, 5, 10, 20]
+  random_forest_iterations: 12
+  gradient_boosting_trials: 20
+  xgboost_trials: 25
+  lightgbm_trials: 25
+
+uncertainty:
+  # Coverage levels for split-conformal prediction intervals.
+  levels: [0.8, 0.9, 0.95]
+  default_level: 0.9
+
+explainability:
+  shap_sample_size: 300
+  permutation_repeats: 5
+  pdp_features: [GrLivArea, OverallQual, TotalBsmtSF, YearBuilt, GarageCars, LotArea]
+  pdp_grid_resolution: 25
+  pdp_sample_size: 300

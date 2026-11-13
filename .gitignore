@@ -1,0 +1,27 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+env/
+*.egg-info/
+
+# Kaggle competition data: not redistributed. Fetch with scripts/download_data.py
+data/raw/*.csv
+data/raw/*.zip
+data/raw/*.txt
+data/raw/.*.part
+
+# Models trained interactively in the Experiment Lab
+models/lab/*.joblib
+
+# Jupyter / editors / OS
+.ipynb_checkpoints/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Streamlit secrets
+.streamlit/secrets.toml
