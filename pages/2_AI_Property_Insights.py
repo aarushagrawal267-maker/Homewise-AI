@@ -83,12 +83,12 @@ c1, c2 = st.columns(2, gap="large")
 with c1:
     st.plotly_chart(scatter_vs_price(df, "GrLivArea", "Living area vs price — all sales",
                                      highlight={"x": float(rec["GrLivArea"]), "y": est, "label": "This property"}),
-                    use_container_width=True)
+                    width="stretch")
 with c2:
     surface = report_json("price_surface.json")
     if surface:
         st.plotly_chart(price_surface_3d(surface, point={"x": float(rec["GrLivArea"]), "y": int(rec["OverallQual"]), "z": est},
-                                         height=440), use_container_width=True)
+                                         height=440), width="stretch")
         md('<p style="color:var(--ink-3);font-size:12.5px">3D price surface: average model prediction across '
            'training homes as living area and quality vary (partial dependence). Drag to rotate.</p>')
 
@@ -100,5 +100,5 @@ fig = go.Figure(go.Bar(x=[NEIGHBORHOOD_NAMES.get(i, i) for i in g.index], y=g.va
 fig.add_hline(y=est, line=dict(color=SERIES[0], dash="dot"), annotation_text="This estimate",
               annotation_font_color="#E6EDF7")
 fig.update_yaxes(tickprefix="$", tickformat=",.0f")
-st.plotly_chart(style(fig, "Median recorded sale price by neighborhood", legend=False, height=420), use_container_width=True)
+st.plotly_chart(style(fig, "Median recorded sale price by neighborhood", legend=False, height=420), width="stretch")
 footer()

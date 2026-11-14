@@ -153,14 +153,27 @@ def footer() -> None:
 
 @st.cache_data(show_spinner=False)
 def load_train_df() -> pd.DataFrame | None:
-    from .data_loader import datasets_available, load_train
-    return load_train() if datasets_available() else None
+    from .data_loader import load_train
+    return load_train() if ensure_dataset() else None
 
 
 @st.cache_data(show_spinner=False)
 def load_test_df() -> pd.DataFrame | None:
-    from .data_loader import datasets_available, load_test
-    return load_test() if datasets_available() else None
+    from .data_loader import load_test
+    return load_test() if ensure_dataset() else None
+
+
+@st.cache_resource(show_spinner="Downloading the Kaggle House Prices dataset (first run only)…")
+def ensure_dataset() -> bool:
+    """On a fresh server (e.g. a cloud deployment) fetch the checksum-verified CSVs once."""
+    from .data_loader import acquire_dataset, datasets_available
+    if datasets_available():
+        return True
+    try:
+        acquire_dataset(verbose=False)
+    except Exception:
+        return False
+    return datasets_available()
 
 
 @st.cache_resource(show_spinner="Loading the trained model…")
@@ -324,7 +337,7 @@ def property_form(engine, defaults: dict, key: str, submit_label: str = "Estimat
         c1, c2, _ = st.columns(3)
         ca = c1.toggle("Central air conditioning", bool(d["HasCentralAir"]))
         pool = c2.toggle("Swimming pool", bool(d["HasPool"]))
-        submitted = st.form_submit_button(submit_label, type="primary", use_container_width=True)
+        submitted = st.form_submit_button(submit_label, type="primary", width="stretch")
     if not submitted:
         return None
     out = {"Neighborhood": nb, "BldgType": bt, "HouseStyle": hs, "OverallQual": oq, "OverallCond": oc,

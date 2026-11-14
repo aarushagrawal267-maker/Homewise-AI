@@ -23,9 +23,9 @@ with left:
     and re-imagine the home in 3D.</p></div>""")
     b1, b2 = st.columns(2)
     b1.page_link("pages/1_Property_Valuation.py", label="Value a property", icon=":material/arrow_forward:",
-                 use_container_width=True)
+                 width="stretch")
     b2.page_link("pages/6_Renovation_Simulator.py", label="Open the 3D simulator", icon=":material/view_in_ar:",
-                 use_container_width=True)
+                 width="stretch")
     md('<p style="color:var(--ink-3);font-size:13px;margin-top:14px">Trained on 1,460 real Ames, Iowa sales · '
        'Kaggle House Prices dataset · educational prototype</p>')
 
@@ -86,7 +86,7 @@ if df is not None:
         shap_imp = report_csv("shap_importance.csv")
         if shap_imp is not None:
             st.plotly_chart(importance_bar(shap_imp, "mean_abs_shap", "What the model relies on most", top=10,
-                                           xtitle="Mean |SHAP| (log-price)"), use_container_width=True)
+                                           xtitle="Mean |SHAP| (log-price)"), width="stretch")
             md('<p style="color:var(--ink-3);font-size:12.5px">Average absolute SHAP contribution on validation '
                'homes. These show what the model relies on, not proof that changing a feature causes price changes.</p>')
 

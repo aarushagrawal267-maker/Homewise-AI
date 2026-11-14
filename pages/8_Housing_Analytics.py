@@ -73,39 +73,39 @@ tabs = st.tabs(["Price intelligence", "Property intelligence", "Feature relation
 
 with tabs[0]:
     c1, c2 = st.columns(2, gap="large")
-    c1.plotly_chart(histogram(df["SalePrice"], "Sale price distribution", xprefix="$"), use_container_width=True)
+    c1.plotly_chart(histogram(df["SalePrice"], "Sale price distribution", xprefix="$"), width="stretch")
     c2.plotly_chart(histogram(np.log1p(df["SalePrice"]), "log(1 + sale price) distribution", color=SERIES[1]),
-                    use_container_width=True)
+                    width="stretch")
     nbd = df.assign(Neighborhood=df["Neighborhood"].map(lambda v: NEIGHBORHOOD_NAMES.get(v, v)))
-    st.plotly_chart(median_bar(nbd, "Neighborhood", "Median sale price by neighborhood", min_count=1), use_container_width=True)
+    st.plotly_chart(median_bar(nbd, "Neighborhood", "Median sale price by neighborhood", min_count=1), width="stretch")
     c1, c2 = st.columns(2, gap="large")
-    c1.plotly_chart(box_by(df, "OverallQual", "Sale price by overall quality"), use_container_width=True)
+    c1.plotly_chart(box_by(df, "OverallQual", "Sale price by overall quality"), width="stretch")
     btd = df.assign(BldgType=df["BldgType"].map(lambda v: BLDG_NAMES.get(v, v)))
     c2.plotly_chart(median_bar(btd, "BldgType", "Median price by property type", horizontal=False, height=380),
-                    use_container_width=True)
+                    width="stretch")
 
 with tabs[1]:
     c1, c2, c3 = st.columns(3, gap="medium")
-    c1.plotly_chart(histogram(df["HouseAge"], "Age at sale (years)", nbins=40, color=SERIES[3]), use_container_width=True)
-    c2.plotly_chart(count_bar(df["BedroomAbvGr"], "Bedrooms"), use_container_width=True)
-    c3.plotly_chart(count_bar(df["TotalBathrooms"], "Total bathrooms"), use_container_width=True)
+    c1.plotly_chart(histogram(df["HouseAge"], "Age at sale (years)", nbins=40, color=SERIES[3]), width="stretch")
+    c2.plotly_chart(count_bar(df["BedroomAbvGr"], "Bedrooms"), width="stretch")
+    c3.plotly_chart(count_bar(df["TotalBathrooms"], "Total bathrooms"), width="stretch")
     c1, c2, c3 = st.columns(3, gap="medium")
-    c1.plotly_chart(count_bar(df["GarageCars"], "Garage capacity (cars)"), use_container_width=True)
-    c2.plotly_chart(histogram(df["GrLivArea"], "Living area (sq ft)", nbins=40, color=SERIES[0]), use_container_width=True)
+    c1.plotly_chart(count_bar(df["GarageCars"], "Garage capacity (cars)"), width="stretch")
+    c2.plotly_chart(histogram(df["GrLivArea"], "Living area (sq ft)", nbins=40, color=SERIES[0]), width="stretch")
     c3.plotly_chart(histogram(df["LotArea"].clip(upper=df["LotArea"].quantile(.99)), "Lot area (sq ft, 99th pct capped)",
-                              nbins=40, color=SERIES[1]), use_container_width=True)
+                              nbins=40, color=SERIES[1]), width="stretch")
 
 with tabs[2]:
     c1, c2 = st.columns(2, gap="large")
-    c1.plotly_chart(scatter_vs_price(df, "GrLivArea"), use_container_width=True)
-    c2.plotly_chart(scatter_vs_price(df, "YearBuilt"), use_container_width=True)
+    c1.plotly_chart(scatter_vs_price(df, "GrLivArea"), width="stretch")
+    c2.plotly_chart(scatter_vs_price(df, "YearBuilt"), width="stretch")
     c1, c2 = st.columns(2, gap="large")
-    c1.plotly_chart(scatter_vs_price(df, "GarageArea"), use_container_width=True)
-    c2.plotly_chart(scatter_vs_price(df, "TotalBsmtSF"), use_container_width=True)
+    c1.plotly_chart(scatter_vs_price(df, "GarageArea"), width="stretch")
+    c2.plotly_chart(scatter_vs_price(df, "TotalBsmtSF"), width="stretch")
     c1, c2 = st.columns(2, gap="large")
-    c1.plotly_chart(box_by(df, "GarageCars", "Garage capacity vs sale price"), use_container_width=True)
-    c2.plotly_chart(box_by(df, "FullBath", "Full bathrooms vs sale price"), use_container_width=True)
-    st.plotly_chart(box_by(df, "BedroomAbvGr", "Bedrooms vs sale price"), use_container_width=True)
+    c1.plotly_chart(box_by(df, "GarageCars", "Garage capacity vs sale price"), width="stretch")
+    c2.plotly_chart(box_by(df, "FullBath", "Full bathrooms vs sale price"), width="stretch")
+    st.plotly_chart(box_by(df, "BedroomAbvGr", "Bedrooms vs sale price"), width="stretch")
     note("Trend lines are simple least-squares fits for orientation. They ignore every other characteristic and do "
          "not imply that changing one feature causes a price change.", "info")
 
@@ -113,13 +113,13 @@ with tabs[3]:
     three(market_galaxy_html(df), height=560)
     md('<p style="color:var(--ink-3);font-size:12.5px">WebGL point cloud of the filtered sales: living area (x), '
        'year built (depth), sale price (height). Below: the same sales by living area × quality × price.</p>')
-    st.plotly_chart(market_3d_scatter(df), use_container_width=True)
+    st.plotly_chart(market_3d_scatter(df), width="stretch")
 
 with tabs[4]:
     miss = missing_summary(raw.drop(columns=["SalePrice"]))
     c1, c2 = st.columns([1, 1.3], gap="large")
     with c1:
-        st.plotly_chart(missing_bar(miss, "Missing values (full training file)"), use_container_width=True)
+        st.plotly_chart(missing_bar(miss, "Missing values (full training file)"), width="stretch")
     with c2:
         md("<div class='hw-insight'><div class='q'>How missing values are treated</div><div class='a'>For 15 "
            "columns (pool, alley, fence, fireplace, garage and basement descriptors, masonry type) the data "
@@ -135,10 +135,10 @@ with tabs[4]:
            f"{int(raw.drop(columns=['Id']).duplicated().sum())} duplicate records (ignoring Id).</div></div>")
     corr_cols = numeric_correlations(df).head(12).index.tolist() + ["SalePrice"]
     st.plotly_chart(correlation_heatmap(df[corr_cols].corr(), "Correlation heatmap (top 12 numeric features)"),
-                    use_container_width=True)
+                    width="stretch")
     c1, c2, c3 = st.columns(3)
     for c, col in zip((c1, c2, c3), ["MSZoning", "Foundation", "SaleCondition"]):
-        c.plotly_chart(count_bar(df[col], col), use_container_width=True)
+        c.plotly_chart(count_bar(df[col], col), width="stretch")
 
 with tabs[5]:
     if len(df) < 30:

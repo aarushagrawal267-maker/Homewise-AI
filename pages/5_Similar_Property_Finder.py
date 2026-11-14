@@ -64,7 +64,7 @@ show = sims.copy()
 show["Neighborhood"] = show["Neighborhood"].map(lambda v: NEIGHBORHOOD_NAMES.get(v, v))
 st.dataframe(show.rename(columns={TARGET: "Recorded sale price", "similarity": "Similarity (0–100)",
                                   "distance": "Distance", **{c: friendly(c) for c in show.columns if c not in (TARGET,)}}),
-             use_container_width=True, hide_index=True,
+             width="stretch", hide_index=True,
              column_config={"Recorded sale price": st.column_config.NumberColumn(format="$%d"),
                             "Similarity (0–100)": st.column_config.ProgressColumn(min_value=0, max_value=100, format="%.0f"),
                             "Distance": st.column_config.NumberColumn(format="%.2f")})
@@ -80,7 +80,7 @@ with c1:
                              marker=dict(size=18, color=SERIES[2], symbol="diamond", line=dict(color="white", width=2))))
     fig.update_xaxes(title="Living area (sq ft)")
     fig.update_yaxes(title="Price ($)", tickprefix="$", tickformat=",.0f")
-    st.plotly_chart(style(fig, "Comparables: size vs recorded price", height=420), use_container_width=True)
+    st.plotly_chart(style(fig, "Comparables: size vs recorded price", height=420), width="stretch")
 with c2:
     section("What makes this home different")
     dist = finder.distinguishing_features(record, sims)

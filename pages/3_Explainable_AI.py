@@ -41,10 +41,10 @@ with tab1:
           ("Recorded sale price", money(actual) if actual else "—",
            f"error {money(est - actual)} ({(est - actual) / actual:+.1%})" if actual else "not a dataset sale")])
     st.write("")
-    st.plotly_chart(waterfall(row, expl.base_price, est, top=10), use_container_width=True)
+    st.plotly_chart(waterfall(row, expl.base_price, est, top=10), width="stretch")
     c1, c2 = st.columns([1.2, 1], gap="large")
     with c1:
-        st.plotly_chart(contribution_bar(row, top=14, title="Feature contributions (≈ $)"), use_container_width=True)
+        st.plotly_chart(contribution_bar(row, top=14, title="Feature contributions (≈ $)"), width="stretch")
     with c2:
         section("How to read this")
         md(f"""<div class="hw-insight"><div class="a">The model predicts the <b>logarithm</b> of price. On that scale SHAP
@@ -59,9 +59,10 @@ with tab1:
              "sales. It is not evidence that changing the feature would cause that price change.")
     tbl = row.head(25).copy()
     tbl["feature"] = tbl["feature"].map(friendly)
+    tbl["value"] = tbl["value"].map(lambda v: f"{v:,.4g}" if isinstance(v, (int, float)) else str(v))
     st.dataframe(tbl.rename(columns={"feature": "Characteristic", "value": "Value", "dollar_contribution": "≈ $ contribution",
                                      "pct_effect": "% effect", "log_contribution": "SHAP (log price)"}),
-                 use_container_width=True, hide_index=True,
+                 width="stretch", hide_index=True,
                  column_config={"≈ $ contribution": st.column_config.NumberColumn(format="$%.0f"),
                                 "% effect": st.column_config.NumberColumn(format="%+.2f%%"),
                                 "SHAP (log price)": st.column_config.NumberColumn(format="%+.4f")})
@@ -75,16 +76,16 @@ with tab2:
         note("Global explanation files are missing. Re-run python scripts/train_all.py.")
     else:
         st.plotly_chart(shap_beeswarm(shap_vals.drop(columns=["Id"]), shap_feat.drop(columns=["Id"]), top=16),
-                        use_container_width=True)
+                        width="stretch")
         md('<p style="color:var(--ink-3);font-size:12.5px">Each dot is one validation property. Position = how much '
            'that characteristic moved its predicted log price; colour = whether its value was high (blue) or low '
            '(orange) relative to other homes.</p>')
         c1, c2 = st.columns(2, gap="large")
         c1.plotly_chart(importance_bar(shap_imp, "mean_abs_shap", "SHAP importance (mean |SHAP|)", top=15,
-                                       xtitle="Mean |SHAP| (log price)"), use_container_width=True)
+                                       xtitle="Mean |SHAP| (log price)"), width="stretch")
         c2.plotly_chart(importance_bar(perm, "importance_mean", "Permutation importance (validation)", top=15,
                                        err_col="importance_std", xtitle="Increase in RMSLE when shuffled"),
-                        use_container_width=True)
+                        width="stretch")
         note("SHAP importance is computed on engineered features; permutation importance shuffles the raw input "
              "columns on the validation set. Correlated features (e.g. GrLivArea, TotalSF, QualityArea) share credit, "
              "so a single feature can look less important than the underlying concept really is.", "info")
@@ -97,7 +98,7 @@ with tab3:
         feat = st.selectbox("Characteristic", list(pdps), format_func=friendly)
         inputs, base, _ = current_property(engine)
         cur = engine.value(inputs, base=base).record.iloc[0][feat]
-        st.plotly_chart(pdp_chart(pdps[feat], current=float(cur)), use_container_width=True)
+        st.plotly_chart(pdp_chart(pdps[feat], current=float(cur)), width="stretch")
         md('<p style="color:var(--ink-3);font-size:12.5px">Thick line: average model prediction over 300 training '
            'homes when the characteristic is set to each value (related fields such as floor areas are kept '
            'consistent). Thin lines: individual homes (ICE). Dotted line: your latest property.</p>')
@@ -111,7 +112,7 @@ with tab4:
         r = engine.value(inputs, base=base)
         rr = r.record.iloc[0]
         st.plotly_chart(price_surface_3d(surface, point={"x": float(rr["GrLivArea"]), "y": int(rr["OverallQual"]),
-                                                         "z": r.estimate}, height=640), use_container_width=True)
+                                                         "z": r.estimate}, height=640), width="stretch")
         md('<p style="color:var(--ink-3);font-size:12.5px">Two-way partial dependence: average model prediction over '
            '150 training homes for each living-area × quality combination. Drag to rotate; scroll to zoom.</p>')
 footer()

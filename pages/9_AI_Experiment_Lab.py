@@ -43,7 +43,7 @@ with c1:
         fe = st.toggle("Feature engineering", True)
         outl = st.toggle("Remove training outliers", bool(CONFIG["preprocessing"]["remove_training_outliers"]))
         save_model = st.toggle("Save the trained model file", False)
-        run = st.button("Run experiment", type="primary", use_container_width=True)
+        run = st.button("Run experiment", type="primary", width="stretch")
 
 with c2:
     if run:
@@ -95,12 +95,12 @@ with c2:
                                marker=dict(color=SERIES[0], cornerradius=4)))
         fig.add_hline(y=r["cv_rmsle_mean"], line=dict(color=SERIES[2], dash="dot"), annotation_text="mean",
                       annotation_font_color="#E6EDF7")
-        st.plotly_chart(style(fig, "RMSLE per cross-validation fold", legend=False, height=280), use_container_width=True)
+        st.plotly_chart(style(fig, "RMSLE per cross-validation fold", legend=False, height=280), width="stretch")
         if st.button("Compute permutation importance (validation, ~10–60 s)"):
             with st.spinner("Shuffling each column and re-scoring…"):
                 pim = permutation_importance_raw(last["fitted"], last["Xva"], last["yva"], n_repeats=3)
             st.plotly_chart(importance_bar(pim, "importance_mean", "Permutation importance", top=12,
-                                           err_col="importance_std", xtitle="Increase in RMSLE"), use_container_width=True)
+                                           err_col="importance_std", xtitle="Increase in RMSLE"), width="stretch")
         note("Validation metrics are shown for learning purposes. Choosing settings by repeatedly checking the "
              "validation score overfits it; the production model was selected by cross-validation only.", "info")
 
@@ -112,7 +112,7 @@ else:
     exp = exp.iloc[::-1].reset_index(drop=True)
     src_filter = st.multiselect("Source", sorted(exp["Source"].dropna().unique()), placeholder="All sources")
     view = exp[exp["Source"].isin(src_filter)] if src_filter else exp
-    st.dataframe(view, use_container_width=True, hide_index=True,
+    st.dataframe(view, width="stretch", hide_index=True,
                  column_config={"Val MAE": st.column_config.NumberColumn(format="$%.0f"),
                                 "Val RMSE": st.column_config.NumberColumn(format="$%.0f"),
                                 "Val R²": st.column_config.NumberColumn(format="%.4f"),
@@ -133,5 +133,5 @@ else:
         fig.update_xaxes(title="Cross-validation RMSLE")
         fig.update_yaxes(title="Validation RMSLE")
         st.plotly_chart(style(fig, "Cross-validation vs validation error per experiment", legend=False, height=380),
-                        use_container_width=True)
+                        width="stretch")
 footer()

@@ -326,6 +326,7 @@ homewise-ai/
 ├── outputs/  figures/ · reports/ · experiments/experiments.jsonl · submission.csv
 ├── notebooks/housing_exploration.ipynb
 ├── tests/    8 test modules (80 tests)
+├── Dockerfile · DEPLOYMENT.md · requirements-dev.txt
 ├── config.yaml · requirements.txt · README.md · PROJECT_REPORT.md
 ```
 
@@ -343,10 +344,10 @@ git checkout claude/sleepy-volta-r6h4a0
 py -3.11 -m venv .venv
 .venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
-pip install -r requirements.txt
+pip install -r requirements-dev.txt
 ```
 
-If PowerShell blocks the activation script, run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` and
+`requirements-dev.txt` adds pytest and the notebook tools to the runtime requirements in `requirements.txt`. If PowerShell blocks the activation script, run `Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` and
 activate again. In Command Prompt use `.venv\Scripts\activate.bat`. Replace `3.11` with `3.12` if that is what you
 installed. The versions are pinned because the saved models were trained with them.
 
@@ -378,6 +379,10 @@ The run regenerates `models/`, `outputs/reports/`, `outputs/figures/` and `outpu
 the experiment log. To rebuild the notebook, run `python scripts/build_notebook.py`.
 
 ## 22. Launch the application
+
+To put the app online (Streamlit Community Cloud, Hugging Face Spaces, Render or Docker), see
+[DEPLOYMENT.md](DEPLOYMENT.md). On a fresh server the app downloads the dataset automatically on first launch.
+
 
 ```powershell
 streamlit run app.py

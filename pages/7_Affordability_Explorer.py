@@ -62,7 +62,7 @@ with c2:
                        steps=[dict(range=[0, 28], color="rgba(31,165,146,.12)"),
                               dict(range=[28, 36], color="rgba(57,135,229,.12)"),
                               dict(range=[36, 60], color="rgba(208,111,31,.14)")])))
-        st.plotly_chart(style(fig, "Payment as % of income", legend=False, height=260), use_container_width=True)
+        st.plotly_chart(style(fig, "Payment as % of income", legend=False, height=260), width="stretch")
         md('<p style="color:var(--ink-3);font-size:12.5px">Bands at 28% and 36% are common rule-of-thumb reference '
            'points in US lending discussions, shown for orientation only; they are not an affordability verdict.</p>')
 
@@ -70,8 +70,8 @@ if r.loan_amount > 0:
     sched = amortization_schedule(r.loan_amount, r.annual_rate_pct, r.years)
     section("Repayment over time")
     a, bcol = st.columns(2, gap="large")
-    a.plotly_chart(amortization_chart(sched), use_container_width=True)
-    bcol.plotly_chart(balance_chart(sched), use_container_width=True)
+    a.plotly_chart(amortization_chart(sched), width="stretch")
+    bcol.plotly_chart(balance_chart(sched), width="stretch")
     section("Interest-rate sensitivity", "Monthly instalment for the same loan at different rates.")
     sens = rate_sensitivity(r.loan_amount, r.years, np.round(np.arange(max(0, rate - 3), rate + 3.01, 0.5), 2))
     fig = go.Figure(go.Bar(x=[f"{v:.1f}%" for v in sens["annual_rate_pct"]], y=sens["monthly_payment"],
@@ -79,7 +79,7 @@ if r.loan_amount > 0:
                                        cornerradius=4),
                            hovertemplate="%{x}: %{y:$,.0f}/month<extra></extra>"))
     fig.update_yaxes(tickprefix="$", tickformat=",.0f", title="Monthly instalment")
-    st.plotly_chart(style(fig, legend=False, height=340), use_container_width=True)
+    st.plotly_chart(style(fig, legend=False, height=340), width="stretch")
     with st.expander("Formula"):
         st.latex(r"M = P\,\frac{r}{1-(1+r)^{-n}},\quad r=\frac{\text{annual rate}}{12},\; n = 12 \times \text{years}")
         st.caption("If the rate is 0%, M = P / n. Taxes, insurance, fees and mortgage insurance are excluded.")

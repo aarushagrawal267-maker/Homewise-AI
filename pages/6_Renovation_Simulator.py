@@ -125,9 +125,9 @@ with c1:
                                         color="#7D8BA1", thickness=1)))
     fig.update_yaxes(tickprefix="$", tickformat=",.0f")
     st.plotly_chart(style(fig, "Model estimates (whiskers: 90% interval of each scenario)", legend=False, height=420),
-                    use_container_width=True)
+                    width="stretch")
 with c2:
-    st.dataframe(scenarios_frame(results), use_container_width=True, hide_index=True,
+    st.dataframe(scenarios_frame(results), width="stretch", hide_index=True,
                  column_config={c: st.column_config.NumberColumn(format="$%.0f") for c in
                                 ["Original estimate", "Modified estimate", "Difference"]} |
                                {"Difference %": st.column_config.NumberColumn(format="%+.2f%%")})
@@ -149,7 +149,7 @@ with c2:
                            marker=dict(color=[SERIES[1] if v >= 0 else SERIES[2] for v in shift["pct"]], cornerradius=4),
                            hovertemplate="%{y}: %{x:+.2f}%<extra></extra>"))
     fig.update_xaxes(title="Change in SHAP effect on the estimate (%)", ticksuffix="%")
-    st.plotly_chart(style(fig, "Shift in feature contributions", legend=False, height=360), use_container_width=True)
+    st.plotly_chart(style(fig, "Shift in feature contributions", legend=False, height=360), width="stretch")
 
 section("Sensitivity", "Model estimate as one characteristic sweeps across a range, everything else fixed.")
 feat = st.selectbox("Characteristic", ["OverallQual", "GrLivArea", "TotalBsmtSF", "GarageCars", "FullBath"], format_func=friendly)
@@ -162,5 +162,5 @@ fig.add_vline(x=float(b[feat]), line=dict(color=SERIES[2], dash="dot"), annotati
               annotation_font_color="#E6EDF7")
 fig.update_xaxes(title=friendly(feat))
 fig.update_yaxes(tickprefix="$", tickformat=",.0f", rangemode="normal")
-st.plotly_chart(style(fig, legend=False, height=380), use_container_width=True)
+st.plotly_chart(style(fig, legend=False, height=380), width="stretch")
 footer()

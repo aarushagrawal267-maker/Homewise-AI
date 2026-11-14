@@ -75,7 +75,7 @@ if result is not None:
            'Contributions describe the model, not causal market effects.</p>')
         st.page_link("pages/3_Explainable_AI.py", label="Full explanation & waterfall", icon=":material/psychology:")
     with c2:
-        st.plotly_chart(contribution_bar(row, top=10), use_container_width=True)
+        st.plotly_chart(contribution_bar(row, top=10), width="stretch")
 
     finder = load_finder_cached()
     section("Closest historical sales", "Real Ames sales most similar to this property (not live listings).")

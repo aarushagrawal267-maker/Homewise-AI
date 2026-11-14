@@ -105,14 +105,14 @@ md(f'<div class="hw-card" style="padding:8px 4px"><table class="hw-table"><thead
 
 c1, c2 = st.columns(2, gap="large")
 with c1:
-    st.plotly_chart(radar(radar_scores(profiles, df), names), use_container_width=True)
+    st.plotly_chart(radar(radar_scores(profiles, df), names), width="stretch")
 with c2:
     diffs = price_differences(names, estimates)
     fig = go.Figure(go.Bar(x=names, y=estimates, marker=dict(color=SERIES[:len(names)], cornerradius=4),
                            text=[money(e, True) for e in estimates], textposition="outside",
                            hovertemplate="%{x}: %{y:$,.0f}<extra></extra>"))
     fig.update_yaxes(tickprefix="$", tickformat=",.0f")
-    st.plotly_chart(style(fig, "Model estimates", legend=False, height=440), use_container_width=True)
+    st.plotly_chart(style(fig, "Model estimates", legend=False, height=440), width="stretch")
 
 section("Why the model prices them differently", f"Explanation difference: {names[1]} relative to {names[0]}.")
 ea = explainer.explain(profiles[0]).contributions.iloc[0]
@@ -123,7 +123,7 @@ fig = go.Figure(go.Bar(x=d["pct_effect"], y=[friendly(f) for f in d["feature"]],
                        hovertemplate="%{y}: %{x:+.1f}% effect on estimate<extra></extra>"))
 fig.add_vline(x=0, line=dict(color="rgba(255,255,255,.25)"))
 fig.update_xaxes(title=f"Effect on {names[1]}'s estimate relative to {names[0]} (%)", ticksuffix="%")
-st.plotly_chart(style(fig, legend=False, height=420), use_container_width=True)
+st.plotly_chart(style(fig, legend=False, height=420), width="stretch")
 note("Differences in SHAP contributions explain how the model distinguishes the two homes. They are associations "
      "learned from historical sales, not causal effects.", "info")
 footer()
