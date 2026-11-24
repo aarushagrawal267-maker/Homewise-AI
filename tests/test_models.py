@@ -79,3 +79,30 @@ def test_engine_is_cached_not_retrained():
         pytest.skip("run scripts/train_all.py to create the bundle")
     from src.prediction import load_engine
     assert load_engine() is load_engine()
+
+
+@pytest.mark.parametrize("content, expected", [
+    (b"version https://git-lfs.github.com/spec/v1\noid sha256:abc\nsize 438000\n", "git lfs pull"),
+    (b"\x80\x04not a real pickle", "Could not load"),
+])
+def test_unloadable_bundle_gives_clear_error(tmp_path, content, expected):
+    """A Git LFS pointer or corrupt file must not surface as a cryptic unpickling traceback."""
+    from src.prediction import ModelLoadError, PredictionEngine
+    p = tmp_path / "homewise_model.joblib"
+    p.write_bytes(content)
+    with pytest.raises(ModelLoadError, match=expected):
+        PredictionEngine.load(p)
+
+
+def test_non_bundle_file_rejected(tmp_path):
+    from src.prediction import ModelLoadError, PredictionEngine
+    p = tmp_path / "homewise_model.joblib"
+    joblib.dump({"model": None}, p)
+    with pytest.raises(ModelLoadError, match="missing"):
+        PredictionEngine.load(p)
+
+
+def test_missing_bundle_raises_not_trained(tmp_path):
+    from src.prediction import ModelNotTrainedError, PredictionEngine
+    with pytest.raises(ModelNotTrainedError, match="train_all.py"):
+        PredictionEngine.load(tmp_path / "absent.joblib")

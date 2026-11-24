@@ -38,6 +38,14 @@ class ModelNotTrainedError(FileNotFoundError):
     pass
 
 
+class ModelLoadError(RuntimeError):
+    """Raised when the model bundle exists but cannot be loaded (corrupt, Git LFS pointer, wrong versions)."""
+
+
+BUNDLE_KEYS = ("model", "model_label", "template", "category_options", "numeric_ranges",
+               "conformal_quantiles", "defaults", "background")
+
+
 # name -> (type, hard_min, hard_max)
 FIELD_SPECS: dict[str, tuple[str, float, float]] = {
     "OverallQual": ("int", 1, 10),
@@ -322,7 +330,25 @@ class PredictionEngine:
         if not path.exists():
             raise ModelNotTrainedError(
                 f"No trained model found at {path}. Run: python scripts/train_all.py")
-        return cls(joblib.load(path))
+        with open(path, "rb") as fh:
+            head = fh.read(64)
+        if head.startswith(b"version https://git-lfs"):
+            raise ModelLoadError(
+                f"{path.name} is a Git LFS pointer, not the model itself. Run 'git lfs pull' to fetch the real "
+                "file, or retrain with: python scripts/train_all.py")
+        try:
+            bundle = joblib.load(path)
+        except Exception as err:
+            raise ModelLoadError(
+                f"Could not load {path.name} ({type(err).__name__}: {err}). The file may be corrupt or was saved "
+                "with different library versions. Install the pinned versions with "
+                "'pip install -r requirements.txt', or retrain with: python scripts/train_all.py") from err
+        missing = [k for k in BUNDLE_KEYS if not isinstance(bundle, dict) or k not in bundle]
+        if missing:
+            raise ModelLoadError(
+                f"{path.name} is not a HomeWise model bundle (missing: {', '.join(missing)}). "
+                "Retrain with: python scripts/train_all.py")
+        return cls(bundle)
 
     @property
     def model_label(self) -> str:

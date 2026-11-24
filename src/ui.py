@@ -160,51 +160,88 @@ def footer() -> None:
 
 # ------------------------------------------------------------------- cached resources ----
 
+# Failures (missing dataset, failed download, unloadable model) are never cached: the cached
+# helpers raise instead of returning a sentinel, so the next rerun tries again.
+
 @st.cache_data(show_spinner=False)
-def load_train_df() -> pd.DataFrame | None:
+def _read_train() -> pd.DataFrame:
     from .data_loader import load_train
-    return load_train() if ensure_dataset() else None
+    return load_train()
 
 
 @st.cache_data(show_spinner=False)
-def load_test_df() -> pd.DataFrame | None:
+def _read_test() -> pd.DataFrame:
     from .data_loader import load_test
-    return load_test() if ensure_dataset() else None
+    return load_test()
+
+
+def load_train_df() -> pd.DataFrame | None:
+    return _read_train() if ensure_dataset() else None
+
+
+def load_test_df() -> pd.DataFrame | None:
+    return _read_test() if ensure_dataset() else None
 
 
 @st.cache_resource(show_spinner="Downloading the Kaggle House Prices dataset (first run only)…")
+def _download_dataset_once() -> bool:
+    from .data_loader import acquire_dataset
+    acquire_dataset(verbose=False)  # raises on failure, so a failed attempt is not cached
+    return True
+
+
 def ensure_dataset() -> bool:
     """On a fresh server (e.g. a cloud deployment) fetch the checksum-verified CSVs once."""
-    from .data_loader import acquire_dataset, datasets_available
+    from .data_loader import datasets_available
     if datasets_available():
         return True
     try:
-        acquire_dataset(verbose=False)
+        _download_dataset_once()
     except Exception:
         return False
     return datasets_available()
 
 
 @st.cache_resource(show_spinner="Loading the trained model…")
-def load_engine_cached():
+def _load_engine_resource():
     from .prediction import PredictionEngine
+    return PredictionEngine.load()  # raises ModelLoadError on a bad file (not cached)
+
+
+def engine_status():
+    """Return ``(engine, problem)``: the engine, or None plus a readable reason it is unavailable."""
+    from .prediction import ModelLoadError
     if not PATHS.model_bundle.exists():
-        return None
-    return PredictionEngine.load()
+        return None, None
+    try:
+        return _load_engine_resource(), None
+    except ModelLoadError as err:
+        return None, str(err)
+
+
+def load_engine_cached():
+    return engine_status()[0]
 
 
 @st.cache_resource(show_spinner="Preparing the explainer…")
-def load_explainer_cached():
+def _explainer_resource():
     from .explainability import HomeWiseExplainer
-    eng = load_engine_cached()
-    return None if eng is None else HomeWiseExplainer(eng.model, eng.bundle["background"])
+    eng = _load_engine_resource()
+    return HomeWiseExplainer(eng.model, eng.bundle["background"])
+
+
+def load_explainer_cached():
+    return None if load_engine_cached() is None else _explainer_resource()
 
 
 @st.cache_resource(show_spinner=False)
-def load_finder_cached():
+def _finder_resource():
     from .similar_properties import SimilarPropertyFinder
-    df = load_train_df()
-    return None if df is None else SimilarPropertyFinder(df)
+    return SimilarPropertyFinder(_read_train())
+
+
+def load_finder_cached():
+    return _finder_resource() if ensure_dataset() else None
 
 
 @st.cache_data(show_spinner=False)
@@ -230,7 +267,10 @@ def require_data() -> pd.DataFrame:
 
 
 def require_engine():
-    eng = load_engine_cached()
+    eng, problem = engine_status()
+    if problem:
+        empty_state("The saved model could not be loaded", html.escape(problem), "flask")
+        st.stop()
     if eng is None:
         empty_state("No trained model yet",
                     "Train the models once with <code>python scripts/train_all.py</code>. The app loads the saved "
