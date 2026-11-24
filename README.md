@@ -24,7 +24,35 @@ twins** rebuilt from each home's attributes and a **3D market galaxy** of every 
 16. [Similar homes](#16-similar-property-finder) · 17. [Affordability](#17-affordability-explorer) ·
 18. [Architecture](#18-application-architecture) · 19. [Installation (Windows)](#19-installation-windows) ·
 20. [Dataset setup](#20-dataset-setup) · 21. [Training](#21-model-training) · 22. [Launch](#22-launch-the-application) ·
-23. [Testing](#23-testing) · 24. [Limitations](#24-limitations) · 25. [Future improvements](#25-future-improvements)
+23. [Testing](#23-testing) · 24. [Limitations](#24-limitations) · 25. [Future improvements](#25-future-improvements) ·
+26. [License](#26-license)
+
+---
+
+## Quick start
+
+```bash
+git clone https://github.com/aarushagrawal267-maker/homewise-ai.git
+cd homewise-ai
+python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
+pip install -r requirements-dev.txt
+python scripts/download_data.py    # fetches the checksum-verified Kaggle CSVs into data/raw/
+pytest                             # 80 tests
+streamlit run app.py               # open http://localhost:8501
+```
+
+The trained models are already committed, so no training is needed. Windows step-by-step instructions are in
+[§19](#19-installation-windows).
+
+## Screenshots
+
+| Home with live 3D twin | Property valuation with 90% interval |
+|---|---|
+| ![Home page](docs/screenshots/home.png) | ![Property valuation](docs/screenshots/valuation.png) |
+| **Explainable AI (SHAP waterfall)** | **Renovation simulator, before and after in 3D** |
+| ![Explainable AI](docs/screenshots/explainable_ai.png) | ![Renovation simulator](docs/screenshots/renovation_simulator.png) |
+| **Housing analytics** | **Model performance** |
+| ![Housing analytics](docs/screenshots/housing_analytics.png) | ![Model performance](docs/screenshots/model_performance.png) |
 
 ---
 
@@ -326,7 +354,9 @@ homewise-ai/
 ├── outputs/  figures/ · reports/ · experiments/experiments.jsonl · submission.csv
 ├── notebooks/housing_exploration.ipynb
 ├── tests/    8 test modules (80 tests)
-├── Dockerfile · DEPLOYMENT.md · requirements-dev.txt
+├── docs/screenshots/          # images used in this README
+├── .github/workflows/tests.yml # CI: downloads the data and runs pytest on every push
+├── Dockerfile · DEPLOYMENT.md · requirements-dev.txt · LICENSE
 ├── config.yaml · requirements.txt · README.md · PROJECT_REPORT.md
 ```
 
@@ -394,6 +424,7 @@ system fonts when offline.
 ## 23. Testing
 
 ```powershell
+python scripts/download_data.py   # once: the data-dependent tests skip themselves if data/raw is empty
 pytest
 ```
 
@@ -427,3 +458,9 @@ The suite has 80 tests in 8 modules covering:
 * Geospatial features if coordinates become available, and time-aware validation across sale years.
 * Retraining on larger, more recent and more diverse datasets with appropriate licensing.
 * Model cards and fairness checks across neighbourhoods.
+
+## 26. License
+
+The source code is released under the [MIT License](LICENSE). Three.js in `static/vendor/three/` is also MIT
+licensed (see its own `LICENSE`). The Kaggle dataset is **not** included in this repository and remains subject to
+the competition's rules; `scripts/download_data.py` fetches it for local use.
