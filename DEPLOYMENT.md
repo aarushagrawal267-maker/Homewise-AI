@@ -14,13 +14,14 @@ Pick one of the options below.
 
 ## Option A — Streamlit Community Cloud (free, recommended)
 
-1. **Make sure the code is on GitHub.** It already is: `aarushagrawal267-maker/Homewise-AI`, branch
-   `claude/sleepy-volta-r6h4a0`. Optionally merge it into `main` first.
+1. **Make sure the code is on GitHub.** It already is: `aarushagrawal267-maker/homewise-ai`. The finished code is
+   on branch `claude/project-completion`; merge it into `main` first (open a pull request on GitHub and click
+   **Merge**) so that `main` has the latest version.
 2. **Sign in.** Go to <https://share.streamlit.io> and sign in with GitHub. For a private repository, allow
    Streamlit to access it when asked.
 3. **Create the app.** Click **Create app**, then **Deploy a public app from GitHub**, and fill in:
-   * Repository: `aarushagrawal267-maker/Homewise-AI`
-   * Branch: `claude/sleepy-volta-r6h4a0` (or `main` if you merged)
+   * Repository: `aarushagrawal267-maker/homewise-ai`
+   * Branch: `main` (after merging) or `claude/project-completion`
    * Main file path: `app.py`
    * App URL: choose a name, e.g. `homewise-ai`
 4. **Choose Python 3.12.** Open **Advanced settings** and set Python version **3.12**.
@@ -42,8 +43,12 @@ Notes:
 2. Push this repository to the Space:
    ```bash
    git remote add space https://huggingface.co/spaces/<your-username>/homewise-ai
-   git push space claude/sleepy-volta-r6h4a0:main
+   git push space main:main
    ```
+   Hugging Face rejects plain-git pushes that contain binary files (`models/*.joblib`, `*.png`). If the push is
+   refused, install Git LFS (`git lfs install`), run `git lfs track "*.joblib" "*.png"`, commit `.gitattributes`
+   together with `git add --renormalize .`, and push again. Alternatively, create the Space from the web UI and
+   upload the repository files there.
 3. Add this header to the top of `README.md` **in the Space** so it uses port 8501:
    ```
    ---
