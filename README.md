@@ -38,7 +38,7 @@ git checkout claude/project-completion   # only needed until this branch is merg
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements-dev.txt
 python scripts/download_data.py    # fetches the checksum-verified Kaggle CSVs into data/raw/
-pytest                             # 80 tests
+pytest                             # 87 tests
 streamlit run app.py               # open http://localhost:8501
 ```
 
@@ -378,7 +378,7 @@ homewise-ai/
 ├── models/   homewise_model.joblib · candidates/*.joblib
 ├── outputs/  figures/ · reports/ · experiments/experiments.jsonl · submission.csv
 ├── notebooks/housing_exploration.ipynb
-├── tests/    8 test modules (80 tests)
+├── tests/    8 test modules (87 tests)
 ├── docs/screenshots/          # images used in this README
 ├── .github/workflows/tests.yml # CI: downloads the data and runs pytest on every push
 ├── Dockerfile · DEPLOYMENT.md · requirements-dev.txt · LICENSE
@@ -459,7 +459,7 @@ python scripts/download_data.py   # once: the data-dependent tests skip themselv
 pytest
 ```
 
-The suite has 80 tests in 8 modules covering:
+The suite has 87 tests in 8 modules covering:
 
 * CSV loading, checksums and schema, target, missing-value, duplicate and type checks;
 * NA-means-absent handling, unseen categories, the skew transform, split reproducibility and **no leakage**;
@@ -469,7 +469,9 @@ The suite has 80 tests in 8 modules covering:
 * consistency rules, extrapolation warnings and conformal coverage;
 * SHAP additivity for linear, tree and ensemble models, permutation importance and PDP;
 * affordability against a known amortisation value ($200K at 6% over 30 years = $1,199.10 a month);
-* the simulator, comparison, similar homes, 3D scene generation, the append-only experiment log and engine caching.
+* the simulator, comparison, similar homes, 3D scene generation, the append-only experiment log and engine caching;
+* clear errors for a missing, corrupt or Git LFS pointer model file, the bootstrap intervals and baselines, and that the
+  saved model reproduces the reported validation metrics.
 
 ## 24. Limitations
 

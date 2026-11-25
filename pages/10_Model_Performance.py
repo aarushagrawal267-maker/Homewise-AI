@@ -70,7 +70,7 @@ with tabs[0]:
     if audit and audit.get("run_id") == summary["run_id"]:
         section("Baselines and how precise these numbers are",
                 "From scripts/audit_metrics.py: simple models fitted on the same training split, and 95% bootstrap "
-                "intervals over the 292 validation homes.")
+                f"intervals over the {audit['n_validation']} validation homes.")
         av, ci = audit["validation_metrics"], audit["validation_metrics_ci95"]
         rows = [{"Model": f"{summary['best_model_label']} (selected)", "Val RMSLE": av["RMSLE"], "Val MAE": av["MAE"],
                  "Val R2": av["R2"]}]

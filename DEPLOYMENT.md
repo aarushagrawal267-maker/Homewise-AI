@@ -40,15 +40,20 @@ Notes:
 ## Option B — Hugging Face Spaces (free, Docker)
 
 1. Go to <https://huggingface.co/new-space> and choose **Docker → Blank**, with free CPU hardware.
-2. Push this repository to the Space:
+2. Push this repository to the Space. Hugging Face rejects pushes whose history contains binary files
+   (`models/*.joblib`, `*.png`) that are not stored with Git LFS, and a new Space already has a first commit, so
+   push a one-commit snapshot with Git LFS (this changes neither `main` nor GitHub):
    ```bash
+   git lfs install
    git remote add space https://huggingface.co/spaces/<your-username>/homewise-ai
-   git push space main:main
+   git checkout main                       # or claude/project-completion if not merged yet
+   git checkout --orphan hf-space          # new branch with no history, same files
+   git lfs track "*.joblib" "*.png"
+   git add .gitattributes && git add --renormalize . && git commit -m "HomeWise AI for Spaces"
+   git push space hf-space:main --force    # overwrites only the Space's own repository
+   git checkout main
    ```
-   Hugging Face rejects plain-git pushes that contain binary files (`models/*.joblib`, `*.png`). If the push is
-   refused, install Git LFS (`git lfs install`), run `git lfs track "*.joblib" "*.png"`, commit `.gitattributes`
-   together with `git add --renormalize .`, and push again. Alternatively, create the Space from the web UI and
-   upload the repository files there.
+   Alternatively, create the Space from the web UI and upload the repository files there.
 3. Add this header to the top of `README.md` **in the Space** so it uses port 8501:
    ```
    ---

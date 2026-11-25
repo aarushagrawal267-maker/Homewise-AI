@@ -1,7 +1,7 @@
 """Re-check the reported metrics against the saved models, and add baselines and confidence intervals.
 
 Usage:
-    python scripts/audit_metrics.py              # about 1-2 min on a laptop
+    python scripts/audit_metrics.py              # about 30 s on a laptop
     python scripts/audit_metrics.py --skip-nested  # skip the ensemble-weight CV check (a few seconds)
 
 What it does (no retraining of the saved models):
@@ -138,7 +138,8 @@ def main() -> int:
     ci = bootstrap_metric_ci(y_val, val_pred, n_boot=args.n_boot)
     best_key = summary["best_model"]
     singles = comparison[~comparison.index.str.contains("ensemble")].sort_values("CV RMSLE")
-    others = [k for k in comparison.index if "ensemble" in k and k != best_key] + [singles.index[0]]
+    others = [k for k in comparison.index if "ensemble" in k] + [singles.index[0]]
+    others = list(dict.fromkeys(k for k in others if k != best_key))  # never compare the model with itself
     paired = {k: paired_bootstrap_rmsle_diff(y_val, val_pred, candidate_preds[k], n_boot=args.n_boot)
               for k in others if k in candidate_preds}
     cov_ci = {}
