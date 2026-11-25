@@ -4,6 +4,10 @@ on:
   push:
   pull_request:
 
+# The tests only read the repository; keep the workflow token read-only.
+permissions:
+  contents: read
+
 jobs:
   pytest:
     runs-on: ubuntu-latest

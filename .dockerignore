@@ -10,3 +10,11 @@ models/lab/*.joblib
 notebooks
 docs
 .github
+# Credentials must never be baked into an image layer
+.env
+.env.*
+.streamlit/secrets.toml
+kaggle.json
+*.pem
+*.key
+node_modules

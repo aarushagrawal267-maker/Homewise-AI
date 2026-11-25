@@ -25,3 +25,23 @@ Thumbs.db
 
 # Streamlit secrets
 .streamlit/secrets.toml
+
+# Credentials and local environment: never commit
+.env
+.env.*
+!.env.example
+kaggle.json
+*.pem
+*.key
+*.p12
+*.pfx
+
+# Data dumps and local databases
+*.sqlite
+*.sqlite3
+*.db
+*.dump
+*.sql.gz
+
+# Node (in case front-end tooling is added)
+node_modules/
