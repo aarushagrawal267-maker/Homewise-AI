@@ -14,13 +14,13 @@ Pick one of the options below.
 
 ## Option A — Streamlit Community Cloud (free, recommended)
 
-1. **Make sure the code is on GitHub.** It already is: `aarushagrawal267-maker/homewise-ai`. The finished code is
+1. **Make sure the code is on GitHub.** It already is: `aarushagrawal267-maker/Homewise-AI`. The finished code is
    on branch `claude/project-completion`; merge it into `main` first (open a pull request on GitHub and click
    **Merge**) so that `main` has the latest version.
 2. **Sign in.** Go to <https://share.streamlit.io> and sign in with GitHub. For a private repository, allow
    Streamlit to access it when asked.
 3. **Create the app.** Click **Create app**, then **Deploy a public app from GitHub**, and fill in:
-   * Repository: `aarushagrawal267-maker/homewise-ai`
+   * Repository: `aarushagrawal267-maker/Homewise-AI`
    * Branch: `main` (after merging) or `claude/project-completion`
    * Main file path: `app.py`
    * App URL: choose a name, e.g. `homewise-ai`
@@ -88,7 +88,8 @@ See the README, sections 19–22.
 
 * **Home** shows the rotating 3D house with a live price, and the live model dashboard shows R² 0.942.
 * **Property Valuation:** pressing **Estimate value** returns a price, a range and a 3D house.
-* **About** shows ✓ for train.csv and test.csv, which confirms the automatic download worked.
+* **About** (opened after Home, which triggers the first-run download) shows ✓ for train.csv and test.csv, which
+  confirms the automatic download worked.
 
 If the dataset download is blocked on your host, upload `train.csv` and `test.csv` to `data/raw/`; the app picks
 them up automatically.

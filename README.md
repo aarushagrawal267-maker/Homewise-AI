@@ -32,7 +32,7 @@ twins** rebuilt from each home's attributes and a **3D market galaxy** of every 
 ## Quick start
 
 ```bash
-git clone https://github.com/aarushagrawal267-maker/homewise-ai.git
+git clone https://github.com/aarushagrawal267-maker/Homewise-AI.git homewise-ai
 cd homewise-ai
 git checkout claude/project-completion   # only needed until this branch is merged into main
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
@@ -393,7 +393,7 @@ and reports are `st.cache_data`. The app **never retrains on refresh**.
 You need Python 3.11 or 3.12 (64-bit, from python.org; tick *Add python.exe to PATH*) and Git. In **PowerShell**:
 
 ```powershell
-git clone https://github.com/aarushagrawal267-maker/homewise-ai.git
+git clone https://github.com/aarushagrawal267-maker/Homewise-AI.git homewise-ai
 cd homewise-ai
 git checkout claude/project-completion   # only needed until this branch is merged into main
 py -3.11 -m venv .venv
