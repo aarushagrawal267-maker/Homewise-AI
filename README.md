@@ -260,7 +260,29 @@ The selected ensemble combines Lasso (0.503), Gradient Boosting (0.371) and XGBo
 * 79.8% of homes are within ±10% of their sale price, and 93.5% within ±20%.
 
 The ensemble beats every single model in CV. Its CV score is slightly optimistic, because its weights were fitted on
-the same out-of-fold predictions; the validation split gives the unbiased check.
+the same out-of-fold predictions: re-fitting the weights inside each fold, without that fold, gives 0.1080 instead of
+0.1076, which still ranks it first. All CV scores also carry a little selection optimism, because each model's
+hyperparameters were chosen on the same five folds. The validation split gives the unbiased check.
+
+**Baselines and precision** (`python scripts/audit_metrics.py`, which re-scores the saved models, confirms every
+number in the table above and writes `outputs/reports/metric_audit.json`):
+
+| Reference on the same validation split | Val RMSLE | Val MAE | Val R² |
+|---|---|---|---|
+| Training median price for every home | 0.4099 | $55,819 | −0.049 |
+| Neighbourhood median price | 0.2892 | $38,445 | 0.476 |
+| Log-linear on living area + quality (2 features) | 0.1864 | $25,484 | 0.782 |
+| **Weighted Ensemble** (selected) | **0.0964** | **$12,483** | **0.942** |
+
+* 95% bootstrap intervals for the selected model over the 292 validation homes: RMSLE 0.085–0.108, MAE
+  $10,838 to $14,308, RMSE $15,567 to $23,291, R² 0.922–0.960, share within ±10% 75.3%–84.2%.
+* Paired bootstrap of the RMSLE gap on the same homes: −0.0013 against Lasso (95% CI −0.0053 to +0.0030) and −0.0010
+  against the stacking ensemble (−0.0023 to +0.0001). Both intervals include 0, so validation **cannot separate** the
+  ensemble from Lasso or stacking; the top models are effectively tied. The gap to the baselines is far larger
+  than this noise.
+* Validation RMSLE (0.096) is below CV RMSLE (0.108). The validation interval reaches 0.108, and the final model is
+  trained on all 1,166 training homes while each CV model sees only about 933, so this is sampling noise plus more
+  training data, not leakage.
 
 ## 13. Explainable AI
 
@@ -284,11 +306,13 @@ All of these describe the model's associations, **not causal effects**.
 Split-conformal intervals on the log scale use absolute out-of-fold residuals of the selected model, with the
 finite-sample quantile ⌈(n+1)(1−α)⌉. Coverage measured on the untouched validation split:
 
-| Target | Achieved | Median relative width |
-|---|---|---|
-| 80% | 81.8% | ±11.0% |
-| 90% | 90.4% | ±16.4% |
-| 95% | 95.2% | ±21.8% |
+| Target | Achieved (95% CI) | Range around the estimate | Median width (% of estimate) |
+|---|---|---|---|
+| 80% | 81.8% (77.4–86.0%) | −10.4% / +11.6% | 22.0% |
+| 90% | 90.4% (87.0–93.5%) | −15.1% / +17.8% | 32.9% |
+| 95% | 95.2% (92.5–97.6%) | −19.4% / +24.1% | 43.6% |
+
+Because the interval is symmetric on the log scale, it is slightly wider above the estimate than below it.
 
 Coverage is a marginal, on-average property for homes like those in the data. It is **not guaranteed** for any
 individual home or for homes unlike the training data. The app also warns when inputs fall outside the training
@@ -347,7 +371,7 @@ homewise-ai/
 │   ├── visualization.py       # Plotly chart system (validated colour palette)
 │   ├── three_scenes.py        # Three.js 3D house twins & market galaxy
 │   └── ui.py                  # design system, cached resources, shared form & components
-├── scripts/  download_data.py · train_all.py · build_notebook.py
+├── scripts/  download_data.py · train_all.py · audit_metrics.py · build_notebook.py
 ├── static/vendor/three/       # Three.js (MIT), served locally → 3D works offline
 ├── assets/   styles/main.css · images/logo.svg · icons/mark.svg
 ├── data/raw/ (Kaggle CSVs, git-ignored) · data/processed/ (split Ids)
@@ -409,6 +433,12 @@ python scripts/train_all.py --quick  # smaller search budgets, about 5 min
 The run regenerates `models/`, `outputs/reports/`, `outputs/figures/` and `outputs/submission.csv`, and appends to
 the experiment log. To rebuild the notebook, run `python scripts/build_notebook.py`.
 
+To check the reported numbers without retraining, run `python scripts/audit_metrics.py` (about 30 seconds). It
+re-scores the saved models on the validation split, exits with an error if any number in
+`outputs/reports/training_summary.json` or `model_comparison.csv` does not match, and adds baselines and bootstrap
+confidence intervals in `outputs/reports/metric_audit.json`. After a new training run, re-run it so the Model
+Performance page shows intervals for the new run.
+
 ## 22. Launch the application
 
 To put the app online (Streamlit Community Cloud, Hugging Face Spaces, Render or Docker), see
@@ -449,7 +479,12 @@ The suite has 80 tests in 8 modules covering:
   normal sales.
 * Fields the form does not ask for come from the most representative real sale (#716) or from the home you started
   from. This can matter for homes that differ a lot from those defaults.
-* The weighted ensemble's CV score is slightly optimistic (see §12). Interval coverage is marginal, not per-home.
+* The weighted ensemble's CV score is slightly optimistic (by about 0.0004 RMSLE, see §12), and every CV score carries
+  some hyperparameter-selection optimism. Interval coverage is marginal, not per-home.
+* The validation split has only 292 homes, so its metrics carry real sampling error (RMSLE 95% CI 0.085–0.108). The
+  top three models cannot be told apart on it.
+* The split is random, not by date. Sales from 2006 to 2010 are mixed in both sets, so these scores do not measure
+  how the model would hold up on later sales.
 * The 3D houses are stylised: their geometry is driven by the data but they are not architectural models.
 
 ## 25. Future improvements

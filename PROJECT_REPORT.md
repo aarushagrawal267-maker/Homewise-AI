@@ -116,20 +116,36 @@ The table separates **training fit**, **CV** (used for selection) and **validati
   quality interactions and one-hot neighbourhoods, much of the structure is close to log-linear.
 * **Tree ensembles overfit the most.** LightGBM's train RMSLE is 0.025 against 0.115 in CV, yet they add
   complementary signal.
-* **The OOF-optimised blend is best.** Lasso 0.503 + Gradient Boosting 0.371 + XGBoost 0.125 (Ridge 0) beats every
-  member in CV by 0.0037 RMSLE over Lasso, and also on validation.
+* **The OOF-optimised blend is best in CV.** Lasso 0.503 + Gradient Boosting 0.371 + XGBoost 0.125 (Ridge 0) beats
+  every member in CV, by 0.0038 RMSLE over Lasso. Its validation point estimates are also the best, but the margin
+  there is within sampling noise (§7).
 * **Stacking gives no further gain** and costs five times the training time, so the simpler weighted blend was
   selected.
 * **The ensemble is not automatically better:** it was selected because it had the lowest CV RMSLE, under the same
   procedure as every other model.
+
+**Baselines** (fitted on the same training split, scored on the same 292 validation homes by
+`scripts/audit_metrics.py`):
+
+| Reference | Val RMSLE | Val MAE | Val RMSE | Val R² | Val MAPE |
+|---|---|---|---|---|---|
+| Training median price for every home | 0.4099 | $55,819 | $82,001 | −0.049 | 32.8% |
+| Neighbourhood median price | 0.2892 | $38,445 | $57,959 | 0.476 | 22.4% |
+| Log-linear on living area + quality (2 features) | 0.1864 | $25,484 | $37,401 | 0.782 | 14.9% |
+| Weighted Ensemble (selected) | 0.0964 | $12,483 | $19,262 | 0.942 | 7.0% |
+
+The full models halve the error of a strong two-feature model and cut it by about 75% against a constant guess.
 
 ## 6. Cross-validation results
 
 Per-fold RMSLE of the selected ensemble: 0.1216, 0.0895, 0.1052, 0.1010, 0.1205, giving a mean of 0.1076 and an SD
 of 0.0122. Its out-of-fold predictions over the 1,166 training homes give MAE $13,112, RMSE $20,788 and R² 0.931.
 
-The weights were optimised on these same OOF predictions, so this CV figure is slightly optimistic. Validation
-provides the unbiased check.
+The weights were optimised on these same OOF predictions, so this CV figure is slightly optimistic. Re-fitting the
+weights inside each fold on the other four folds' OOF predictions, then scoring the held-out fold, gives a mean of
+0.1080 (folds 0.1221, 0.0905, 0.1052, 0.1012, 0.1208), so the optimism is about 0.0004 RMSLE. That is too small to
+change the selection, since stacking scores 0.1088. Every model's CV score also includes some selection optimism,
+because its hyperparameters were tuned on the same five folds. Validation provides the unbiased check.
 
 ## 7. Validation results (held-out, 292 homes, scored once)
 
@@ -137,21 +153,43 @@ provides the unbiased check.
 * **Accuracy bands:** 79.8% of homes are predicted within ±10% of their sale price and 93.5% within ±20%.
 * **Residuals** (actual − predicted): mean $775, SD $19,280, range −$55,764 to +$134,513.
 
-Validation RMSLE (0.096) is lower than CV RMSLE (0.108). That is plausible fold-to-fold variation (CV folds range
-from 0.090 to 0.122), not evidence of tuning on validation, because validation was never used for any decision.
+**Precision.** With 292 homes, these numbers carry real sampling error. 95% percentile-bootstrap intervals (2,000
+resamples of the validation homes, `outputs/reports/metric_audit.json`):
+
+| Metric | Value | 95% CI |
+|---|---|---|
+| RMSLE | 0.0964 | 0.0854 – 0.1082 |
+| MAE | $12,483 | $10,838 – $14,308 |
+| RMSE | $19,262 | $15,567 – $23,291 |
+| R² | 0.942 | 0.922 – 0.960 |
+| MAPE | 7.03% | 6.26% – 7.87% |
+| Within ±10% | 79.8% | 75.3% – 84.2% |
+
+Paired bootstrap of the RMSLE difference on the same homes: the selected ensemble minus Lasso is −0.0013 (95% CI
+−0.0053 to +0.0030), and minus the stacking ensemble −0.0010 (−0.0023 to +0.0001). Both intervals contain 0, so the
+validation split **cannot distinguish** the top models; the ensemble's lead rests on CV.
+
+Validation RMSLE (0.096) is lower than CV RMSLE (0.108). The CV mean sits at the edge of the validation interval,
+CV folds themselves range from 0.090 to 0.122, and the final model is trained on all 1,166 training homes while each
+CV model sees about 933. This is sampling noise plus more training data, not evidence of tuning on validation:
+validation was never used for any decision.
+
+`scripts/audit_metrics.py` re-scores the saved selected model and all ten saved candidate models on the validation
+split. Every validation metric, residual statistic and coverage figure in this report matched to within 10⁻⁶.
 
 ## 8. Uncertainty calibration
 
 Split-conformal intervals use the selected model's OOF log residuals. These are the intervals the app shows:
 
-| Target coverage | Validation coverage | Log half-width | Median relative width | Mean width |
-|---|---|---|---|---|
-| 80% | 81.8% | 0.110 | 22.0% (±11.0%) | $39,639 |
-| 90% | 90.4% | 0.164 | 32.9% (±16.4%) | $59,139 |
-| 95% | 95.2% | 0.216 | 43.6% (±21.8%) | $78,414 |
+| Target coverage | Validation coverage (95% CI) | Log half-width | Range around estimate | Median width | Mean width |
+|---|---|---|---|---|---|
+| 80% | 81.8% (77.4–86.0%) | 0.110 | −10.4% / +11.6% | 22.0% | $39,639 |
+| 90% | 90.4% (87.0–93.5%) | 0.164 | −15.1% / +17.8% | 32.9% | $59,139 |
+| 95% | 95.2% (92.5–97.6%) | 0.216 | −19.4% / +24.1% | 43.6% | $78,414 |
 
-Achieved coverage matches the targets on unseen data. Widths scale with price because the intervals are built on the
-log scale.
+Achieved coverage is consistent with the targets on unseen data; each target lies inside its bootstrap interval.
+Widths scale with price because the intervals are built on the log scale, which also makes them a little wider above
+the estimate than below it.
 
 ## 9. Important features
 
@@ -219,9 +257,14 @@ The competition test set has no ground truth, so it was **not scored** locally a
 2. **Sample size:** 1,460 sales. Rare configurations are poorly represented, and intervals are less reliable there.
 3. **Causality:** SHAP, partial dependence and simulator outputs are associations, not effects of interventions.
 4. **Optimism:** the ensemble's CV score is slightly optimistic because its weights were fitted on the same OOF
-   predictions. Validation is the unbiased reference.
-5. **Interval coverage** is marginal, not conditional on a particular home.
-6. **App defaults:** fields not on the form come from a representative real sale (#716, 1,350 sq ft, quality 6,
+   predictions (about 0.0004 RMSLE, §6), and all CV scores include hyperparameter-selection optimism. Validation is
+   the unbiased reference.
+5. **Small validation set:** 292 homes. The headline RMSLE has a 95% CI of 0.085–0.108, and the top three models are
+   statistically tied on validation.
+6. **Random, not time-based, split:** 2006–2010 sales are mixed in training and validation, so the scores do not
+   measure performance on later sales or across the 2008 crisis.
+7. **Interval coverage** is marginal, not conditional on a particular home.
+8. **App defaults:** fields not on the form come from a representative real sale (#716, 1,350 sq ft, quality 6,
    1974, recorded price $165,000) or from the dataset home the user starts from.
 
 ## 13. Future research directions

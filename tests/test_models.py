@@ -106,3 +106,45 @@ def test_missing_bundle_raises_not_trained(tmp_path):
     from src.prediction import ModelNotTrainedError, PredictionEngine
     with pytest.raises(ModelNotTrainedError, match="train_all.py"):
         PredictionEngine.load(tmp_path / "absent.joblib")
+
+
+def test_bootstrap_intervals_bracket_point_estimates():
+    from src.evaluate import bootstrap_metric_ci, paired_bootstrap_rmsle_diff
+    rng = np.random.default_rng(1)
+    y = rng.uniform(80_000, 400_000, 300)
+    p = y * np.exp(rng.normal(0, 0.1, 300))
+    ci = bootstrap_metric_ci(y, p, n_boot=300)
+    point = regression_metrics(y, p)
+    for k in ("RMSLE", "MAE", "R2"):
+        assert ci[k]["lower"] <= point[k] <= ci[k]["upper"]
+    same = paired_bootstrap_rmsle_diff(y, p, p, n_boot=100)
+    assert same == {"diff": 0.0, "lower": 0.0, "upper": 0.0}
+    worse = paired_bootstrap_rmsle_diff(y, p, y * np.exp(rng.normal(0, 0.3, 300)), n_boot=300)
+    assert worse["upper"] < 0
+
+
+def test_naive_baselines_use_training_rows_only(split):
+    from src.evaluate import naive_baselines
+    Xtr, Xva, ytr, yva = split
+    preds = naive_baselines(Xtr, ytr, Xva)
+    assert np.all(preds["Training median price"] == ytr.median())
+    assert all(finite_positive(p) and len(p) == len(Xva) for p in preds.values())
+
+
+def test_saved_bundle_reproduces_reported_validation_metrics():
+    """The numbers in training_summary.json (and so the README/report) come from the saved model."""
+    import json
+    if not PATHS.model_bundle.exists():
+        pytest.skip("run scripts/train_all.py to create the bundle")
+    from src.data_loader import datasets_available, load_train, split_features_target
+    from src.preprocessing import make_train_validation_split
+    if not datasets_available():
+        pytest.skip("Kaggle CSVs not present in data/raw")
+    summary = json.loads((PATHS.reports / "training_summary.json").read_text(encoding="utf-8"))
+    bundle = joblib.load(PATHS.model_bundle)
+    X, y = split_features_target(load_train())
+    _, Xva, _, yva = make_train_validation_split(X, y)
+    assert list(Xva.index) == bundle["val_index"]
+    got = regression_metrics(yva, bundle["model"].predict(Xva))
+    for k, v in summary["best_validation"].items():
+        assert got[k] == pytest.approx(v, rel=1e-6), k

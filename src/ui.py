@@ -118,7 +118,7 @@ def price_card(estimate: float, lower: float, upper: float, level: float, label:
     <div class="rng">{level:.0%} prediction interval · {money(lower)} – {money(upper)}</div>
     <div class="hw-bar"><div class="fill" style="left:{left:.1f}%;width:{width:.1f}%"></div>
     <div class="pin" style="left:calc({pin:.1f}% - 2px)"></div></div>
-    <div class="hw-bar-labels"><span>{money(lower, True)}</span><span>±{(upper - lower) / 2 / estimate:.0%}</span>
+    <div class="hw-bar-labels"><span>{money(lower, True)}</span><span>−{1 - lower / estimate:.0%} / +{upper / estimate - 1:.0%}</span>
     <span>{money(upper, True)}</span></div>
     {f'<div class="rng" style="margin-top:12px;font-size:12.5px">{caption}</div>' if caption else ''}</div>""")
 

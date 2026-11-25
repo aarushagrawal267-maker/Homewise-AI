@@ -68,7 +68,8 @@ insights = [
     ("What sets it apart", "Compared with those comparables, the biggest differences are " + ", ".join(
         f"{friendly(r.feature)} ({r.this_property:,.1f} vs {r.comparables_median:,.1f})" for r in dist.head(3).itertuples()) + "."),
     ("Uncertainty", f"The {res.interval.level:.0%} interval spans {money(res.interval.width)} "
-                    f"(±{res.interval.relative_width / 2:.0%}). Wider ranges are normal for unusual or high-value homes."),
+                    f"(−{1 - res.interval.lower / res.interval.estimate:.0%} / +{res.interval.upper / res.interval.estimate - 1:.0%} "
+                    f"around the estimate). Wider ranges are normal for unusual or high-value homes."),
 ]
 section("Generated insights", "Template-generated from live model outputs and dataset statistics (no language model involved).")
 for q, a in insights:

@@ -2,6 +2,7 @@
 
 import json
 
+import numpy as np
 import pandas as pd
 import streamlit as st
 
@@ -65,6 +66,27 @@ with tabs[0]:
     note("Train RMSLE is measured on the data the model was fitted on and is therefore optimistic. The gap between "
          "train and CV RMSLE indicates overfitting (largest for tree models). Selection used CV only; the validation "
          "split was not used to choose models or hyperparameters.", "info")
+    audit = report_json("metric_audit.json")
+    if audit and audit.get("run_id") == summary["run_id"]:
+        section("Baselines and how precise these numbers are",
+                "From scripts/audit_metrics.py: simple models fitted on the same training split, and 95% bootstrap "
+                "intervals over the 292 validation homes.")
+        av, ci = audit["validation_metrics"], audit["validation_metrics_ci95"]
+        rows = [{"Model": f"{summary['best_model_label']} (selected)", "Val RMSLE": av["RMSLE"], "Val MAE": av["MAE"],
+                 "Val R2": av["R2"]}]
+        rows += [{"Model": f"Baseline: {k}", "Val RMSLE": m["RMSLE"], "Val MAE": m["MAE"], "Val R2": m["R2"]}
+                 for k, m in audit["baselines_validation"].items()]
+        st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True,
+                     column_config={"Val MAE": st.column_config.NumberColumn(format="$%.0f"),
+                                    "Val RMSLE": st.column_config.NumberColumn(format="%.4f"),
+                                    "Val R2": st.column_config.NumberColumn(format="%.3f")})
+        gaps = "; ".join(f"{comp.set_index('model_key').loc[k, 'Model']} {d['diff']:+.4f} "
+                         f"(95% CI {d['lower']:+.4f} to {d['upper']:+.4f})"
+                         for k, d in audit["paired_rmsle_diff_vs"].items() if k in set(comp["model_key"]))
+        note(f"Validation RMSLE {av['RMSLE']:.4f} (95% CI {ci['RMSLE']['lower']:.4f}–{ci['RMSLE']['upper']:.4f}), "
+             f"MAE {money(av['MAE'])} ({money(ci['MAE']['lower'])}–{money(ci['MAE']['upper'])}), "
+             f"R² {av['R2']:.3f} ({ci['R2']['lower']:.3f}–{ci['R2']['upper']:.3f}). RMSLE gap of the selected model "
+             f"to: {gaps}. Intervals that include 0 mean the validation split cannot separate the two models.", "info")
 
 with tabs[1]:
     vp = report_csv("validation_predictions.csv")
@@ -96,7 +118,8 @@ with tabs[1]:
 with tabs[2]:
     cov = summary["coverage"]
     rows = [{"Target coverage": f"{float(k):.0%}", "Validation coverage": f"{c['empirical']:.1%}",
-             "Median relative width": f"±{c['median_relative_width'] / 2:.1%}", "Mean width": money(c["mean_width"]),
+             "Range around estimate": f"−{1 - np.exp(-c['log_half_width']):.1%} / +{np.expm1(c['log_half_width']):.1%}",
+             "Median width (% of estimate)": f"{c['median_relative_width']:.1%}", "Mean width": money(c["mean_width"]),
              "Log half-width q": f"{c['log_half_width']:.4f}"} for k, c in cov.items()]
     st.dataframe(pd.DataFrame(rows), width="stretch", hide_index=True)
     levels = [float(k) for k in cov]
