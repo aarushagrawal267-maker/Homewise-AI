@@ -15,9 +15,9 @@ import plotly.graph_objects as go
 from .data_dictionary import friendly
 
 SURFACE = "#0B1220"
-INK = "#E6EDF7"
-INK_2 = "#A9B6CA"
-INK_3 = "#7D8BA1"
+INK = "#EDEDED"
+INK_2 = "#A1A1A6"
+INK_3 = "#85858B"
 GRID = "rgba(255,255,255,0.06)"
 SERIES = ["#1FA592", "#3987E5", "#D06F1F", "#9085E9", "#D55181"]
 UP, DOWN = "#3987E5", "#D06F1F"

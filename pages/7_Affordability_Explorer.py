@@ -7,7 +7,7 @@ from src.affordability import (
     AFFORDABILITY_DISCLAIMER, AffordabilityInputError, amortization_schedule, calculate, rate_sensitivity,
 )
 from src.ui import footer, kpis, md, note, page_header, section
-from src.visualization import SERIES, amortization_chart, balance_chart, money, style
+from src.visualization import FONT, SERIES, amortization_chart, balance_chart, money, style
 
 import plotly.graph_objects as go
 
@@ -56,8 +56,8 @@ with c2:
           ("Total interest", money(r.total_interest), f"total repaid {money(r.total_repayment)}")], cols=2)
     if pti is not None:
         fig = go.Figure(go.Indicator(
-            mode="gauge+number", value=pti, number=dict(suffix="%", font=dict(color="#E6EDF7", family="Space Grotesk")),
-            gauge=dict(axis=dict(range=[0, 60], tickcolor="#7D8BA1"), bar=dict(color=SERIES[0], thickness=.3),
+            mode="gauge+number", value=pti, number=dict(suffix="%", font=dict(color="#EDEDED", family=FONT)),
+            gauge=dict(axis=dict(range=[0, 60], tickcolor="#85858B"), bar=dict(color=SERIES[0], thickness=.3),
                        bgcolor="rgba(255,255,255,.03)", borderwidth=0,
                        steps=[dict(range=[0, 28], color="rgba(31,165,146,.12)"),
                               dict(range=[28, 36], color="rgba(57,135,229,.12)"),

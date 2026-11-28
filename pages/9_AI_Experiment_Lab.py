@@ -94,7 +94,7 @@ with c2:
         fig = go.Figure(go.Bar(x=[f"Fold {i + 1}" for i in range(len(last["folds"]))], y=last["folds"],
                                marker=dict(color=SERIES[0], cornerradius=4)))
         fig.add_hline(y=r["cv_rmsle_mean"], line=dict(color=SERIES[2], dash="dot"), annotation_text="mean",
-                      annotation_font_color="#E6EDF7")
+                      annotation_font_color="#EDEDED")
         st.plotly_chart(style(fig, "RMSLE per cross-validation fold", legend=False, height=280), width="stretch")
         if st.button("Compute permutation importance (validation, ~10–60 s)"):
             with st.spinner("Shuffling each column and re-scoring…"):

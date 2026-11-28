@@ -73,7 +73,7 @@ c1, c2 = st.columns([1.3, 1], gap="large")
 with c1:
     fig = go.Figure()
     fig.add_trace(go.Scatter(x=sims["GrLivArea"], y=sims[TARGET], mode="markers+text", text=[f"#{i}" for i in sims[ID_COL]],
-                             textposition="top center", textfont=dict(color="#A9B6CA", size=10),
+                             textposition="top center", textfont=dict(color="#A1A1A6", size=10),
                              marker=dict(size=sims["similarity"] / 4 + 6, color=SERIES[1], opacity=.8),
                              name="Comparable sales", hovertemplate="%{text}<br>%{x:,} sq ft<br>$%{y:,.0f}<extra></extra>"))
     fig.add_trace(go.Scatter(x=[record.iloc[0]["GrLivArea"]], y=[est], mode="markers", name="This property (estimate)",

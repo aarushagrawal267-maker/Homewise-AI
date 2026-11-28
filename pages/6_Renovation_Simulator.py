@@ -122,7 +122,7 @@ with c1:
                            error_y=dict(type="data", symmetric=False,
                                         array=[0] + [r.upper - r.modified_price for r in results],
                                         arrayminus=[0] + [r.modified_price - r.lower for r in results],
-                                        color="#7D8BA1", thickness=1)))
+                                        color="#85858B", thickness=1)))
     fig.update_yaxes(tickprefix="$", tickformat=",.0f")
     st.plotly_chart(style(fig, "Model estimates (whiskers: 90% interval of each scenario)", legend=False, height=420),
                     width="stretch")
@@ -159,7 +159,7 @@ curve = sensitivity_curve(engine, b, feat, grids[feat], base_record=base_rec)
 fig = go.Figure(go.Scatter(x=curve[feat], y=curve["estimate"], mode="lines+markers", line=dict(color=SERIES[0], width=3),
                            fill="tozeroy", fillcolor="rgba(31,165,146,.08)", hovertemplate="%{x}: %{y:$,.0f}<extra></extra>"))
 fig.add_vline(x=float(b[feat]), line=dict(color=SERIES[2], dash="dot"), annotation_text="current",
-              annotation_font_color="#E6EDF7")
+              annotation_font_color="#EDEDED")
 fig.update_xaxes(title=friendly(feat))
 fig.update_yaxes(tickprefix="$", tickformat=",.0f", rangemode="normal")
 st.plotly_chart(style(fig, legend=False, height=380), width="stretch")

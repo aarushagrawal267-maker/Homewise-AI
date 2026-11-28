@@ -29,7 +29,7 @@ _BASE_CSS = """
 html,body{margin:0;height:100%;background:transparent;overflow:hidden;
   font-family:'IBM Plex Sans','Segoe UI',system-ui,-apple-system,sans-serif;color:#EDEDED}
 #wrap{position:relative;width:100%;height:100%;border-radius:16px;overflow:hidden;
-  background:radial-gradient(120% 90% at 50% 0%,#232325 0%,#19191b 45%,#111112 100%);
+  background:#19191b;
   border:1px solid rgba(255,255,255,.08)}
 canvas{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
 canvas:active{cursor:grabbing}
@@ -52,12 +52,12 @@ canvas:active{cursor:grabbing}
 .tag.sm{padding:8px 12px}.tag.sm .l{font-size:11px}.tag.sm .p{font-size:17px}.tag.sm .s{font-size:11px}
 .legend{position:absolute;right:12px;bottom:12px;font-size:11px;color:#a1a1a6;background:rgba(20,20,21,.85);
   border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:7px 10px;line-height:1.6}
-@media(max-width:480px){.hud{right:120px}}
+@media(max-width:480px){.hud{right:12px}.legend{bottom:60px}}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
 #tip{position:absolute;pointer-events:none;padding:8px 12px;border-radius:8px;background:rgba(20,20,21,.94);
   border:1px solid rgba(237,237,237,.14);font-size:12px;line-height:1.5;display:none;white-space:nowrap}
 #err{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;
-  padding:30px;color:#9FB0C8;font-size:14px}
+  padding:30px;color:#A1A1A6;font-size:14px}
 """
 
 _LOADER_JS = """
@@ -370,7 +370,7 @@ def market_galaxy_html(df: pd.DataFrame, highlight: dict | None = None) -> str:
     lp = np.log(sp)
     t = (lp - np.log(ref["sp"][0])) / (np.log(ref["sp"][1]) - np.log(ref["sp"][0]))
     t = np.clip(t, 0, 1)
-    tips = [f"<b>${p:,.0f}</b><br>{nb} · Q{q}<br>{int(a):,} sq ft · built {int(b)}<br><span style='color:#7D8BA1'>Id {i}</span>"
+    tips = [f"<b>${p:,.0f}</b><br>{nb} · Q{q}<br>{int(a):,} sq ft · built {int(b)}<br><span style='color:#85858B'>Id {i}</span>"
             for p, nb, q, a, b, i in zip(sp, df["Neighborhood"], df["OverallQual"], gla, yb, df["Id"])]
     pts = [[round(a, 3), round(b, 3), round(c, 3), round(d, 4), s_] for a, b, c, d, s_ in zip(x, y, z, t, tips)]
     B = [-13.0, 13.0, -13.0, 17.0, 13.0]
