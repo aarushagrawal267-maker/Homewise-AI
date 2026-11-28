@@ -14,21 +14,21 @@ Pick one of the options below.
 
 ## Option A — Streamlit Community Cloud (free, recommended)
 
-1. **Make sure the code is on GitHub.** It already is: `aarushagrawal267-maker/Homewise-AI`. The finished code is
-   on branch `claude/project-completion`; merge it into `main` first (open a pull request on GitHub and click
-   **Merge**) so that `main` has the latest version.
+1. **Make sure the code is on GitHub.** It already is: `aarushagrawal267-maker/Homewise-AI`.
 2. **Sign in.** Go to <https://share.streamlit.io> and sign in with GitHub. For a private repository, allow
    Streamlit to access it when asked.
 3. **Create the app.** Click **Create app**, then **Deploy a public app from GitHub**, and fill in:
    * Repository: `aarushagrawal267-maker/Homewise-AI`
-   * Branch: `main` (after merging) or `claude/project-completion`
+   * Branch: the branch that holds the version you want to publish (the repository's default branch unless you
+     choose another)
    * Main file path: `app.py`
    * App URL: choose a name, e.g. `homewise-ai`
 4. **Choose Python 3.12.** Open **Advanced settings** and set Python version **3.12**.
 5. **Deploy.** Click **Deploy**. The first build installs the requirements (about 3–5 minutes). The first visit then
    downloads the dataset and loads the model (about 20–40 seconds), and later visits are fast.
 
-You get a public URL like `https://homewise-ai.streamlit.app`. Every push to the branch redeploys automatically.
+You get a public URL of the form `https://<app-name>.streamlit.app`. Every push to the branch redeploys
+automatically.
 
 Notes:
 
@@ -37,16 +37,19 @@ Notes:
 * Experiments run in the AI Experiment Lab are written to the server's disk and are lost when the app restarts. That
   is expected on a free host.
 
-## Option B — Hugging Face Spaces (free, Docker)
+## Option B — Hugging Face Spaces (Docker)
 
-1. Go to <https://huggingface.co/new-space> and choose **Docker → Blank**, with free CPU hardware.
+> **Note:** Hugging Face now hosts Docker (and Gradio) Spaces on its free `cpu-basic` hardware only for PRO
+> accounts; free accounts can create static Spaces only. Option A is the free route.
+
+1. Go to <https://huggingface.co/new-space> and choose **Docker → Blank**, with `cpu-basic` hardware.
 2. Push this repository to the Space. Hugging Face rejects pushes whose history contains binary files
    (`models/*.joblib`, `*.png`) that are not stored with Git LFS, and a new Space already has a first commit, so
    push a one-commit snapshot with Git LFS (this changes neither `main` nor GitHub):
    ```bash
    git lfs install
    git remote add space https://huggingface.co/spaces/<your-username>/homewise-ai
-   git checkout main                       # or claude/project-completion if not merged yet
+   git checkout main                       # or whichever branch you want to publish
    git checkout --orphan hf-space          # new branch with no history, same files
    git lfs track "*.joblib" "*.png"
    git add .gitattributes && git add --renormalize . && git commit -m "HomeWise AI for Spaces"

@@ -34,7 +34,6 @@ twins** rebuilt from each home's attributes and a **3D market galaxy** of every 
 ```bash
 git clone https://github.com/aarushagrawal267-maker/Homewise-AI.git homewise-ai
 cd homewise-ai
-git checkout claude/project-completion   # only needed until this branch is merged into main
 python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements-dev.txt
 python scripts/download_data.py    # fetches the checksum-verified Kaggle CSVs into data/raw/
@@ -395,7 +394,6 @@ You need Python 3.11 or 3.12 (64-bit, from python.org; tick *Add python.exe to P
 ```powershell
 git clone https://github.com/aarushagrawal267-maker/Homewise-AI.git homewise-ai
 cd homewise-ai
-git checkout claude/project-completion   # only needed until this branch is merged into main
 py -3.11 -m venv .venv
 .venv\Scripts\Activate.ps1
 python -m pip install --upgrade pip
