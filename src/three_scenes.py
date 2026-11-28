@@ -27,32 +27,32 @@ CDN_THREE = "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.min.j
 _BASE_CSS = """
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:transparent;overflow:hidden;
-  font-family:Inter,'Segoe UI',system-ui,-apple-system,sans-serif;color:#E6EDF7}
-#wrap{position:relative;width:100%;height:100%;border-radius:22px;overflow:hidden;
-  background:radial-gradient(120% 90% at 50% 0%,#12233b 0%,#0a1322 45%,#060a13 100%);
+  font-family:'IBM Plex Sans','Segoe UI',system-ui,-apple-system,sans-serif;color:#EDEDED}
+#wrap{position:relative;width:100%;height:100%;border-radius:16px;overflow:hidden;
+  background:radial-gradient(120% 90% at 50% 0%,#232325 0%,#19191b 45%,#111112 100%);
   border:1px solid rgba(255,255,255,.08)}
 canvas{display:block;width:100%;height:100%;cursor:grab;touch-action:none}
 canvas:active{cursor:grabbing}
 .tag{position:absolute;transform:translate(-50%,-100%);pointer-events:none;text-align:center;
-  padding:10px 16px 11px;border-radius:14px;background:rgba(10,18,32,.72);backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);border:1px solid rgba(126,232,210,.35);
-  box-shadow:0 10px 30px rgba(0,0,0,.35),0 0 24px rgba(31,165,146,.18);white-space:nowrap;
+  padding:8px 16px 12px;border-radius:12px;background:rgba(20,20,21,.92);
+  border:1px solid rgba(237,237,237,.14);box-shadow:0 8px 24px rgba(0,0,0,.35);white-space:nowrap;
   transition:opacity .3s}
-.tag .l{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#9FB0C8}
-.tag .p{font-family:'Space Grotesk',Inter,sans-serif;font-weight:700;font-size:22px;color:#fff;margin-top:2px}
-.tag .s{font-size:11.5px;color:#9FB0C8;margin-top:3px}
+.tag .l{font-size:12px;color:#a1a1a6}
+.tag .p{font-weight:500;font-size:22px;color:#EDEDED;margin-top:2px;font-variant-numeric:tabular-nums}
+.tag .s{font-size:12px;color:#a1a1a6;margin-top:4px}
 .tag:after{content:"";position:absolute;left:50%;bottom:-18px;width:1px;height:18px;
-  background:linear-gradient(rgba(126,232,210,.6),transparent)}
+  background:rgba(237,237,237,.4)}
 .hud{position:absolute;left:14px;bottom:14px;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.hud button{min-height:36px;padding:0 14px;border-radius:999px;border:1px solid rgba(255,255,255,.14);
-  background:rgba(10,18,32,.65);color:#DCE6F5;font:500 12.5px Inter,system-ui,sans-serif;cursor:pointer;
-  backdrop-filter:blur(8px)}
-.hud button:hover{border-color:rgba(126,232,210,.6);color:#fff}
-.hud button[aria-pressed=true]{background:rgba(31,165,146,.28);border-color:rgba(126,232,210,.7)}
-.hint{position:absolute;left:16px;top:14px;font-size:11.5px;color:#7D8BA1;letter-spacing:.02em}
-.tag.sm{padding:7px 11px 8px}.tag.sm .l{font-size:9.5px}.tag.sm .p{font-size:17px}.tag.sm .s{font-size:10.5px}
-.legend{position:absolute;right:12px;bottom:12px;font-size:10.5px;color:#9FB0C8;background:rgba(10,18,32,.6);
+.hud button{min-height:36px;padding:0 12px;border:1px solid rgba(237,237,237,.14);
+  background:rgba(20,20,21,.85);color:#EDEDED;font:500 13px 'IBM Plex Sans',system-ui,sans-serif;cursor:pointer;
+  border-radius:8px;transition:border-color .15s,background-color .15s}
+.hud button:hover{border-color:rgba(237,237,237,.3)}
+.hud button[aria-pressed=true]{background:#2a2a2d;border-color:#4FA89B}
+.hint{position:absolute;left:16px;top:16px;font-size:12px;color:#85858b}
+.tag.sm{padding:8px 12px}.tag.sm .l{font-size:11px}.tag.sm .p{font-size:17px}.tag.sm .s{font-size:11px}
+.legend{position:absolute;right:12px;bottom:12px;font-size:11px;color:#a1a1a6;background:rgba(20,20,21,.85);
   border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:7px 10px;line-height:1.6}
+@media(max-width:480px){.legend{top:12px;bottom:auto}.hint{display:none}}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
 #tip{position:absolute;pointer-events:none;padding:8px 11px;border-radius:10px;background:rgba(10,18,32,.9);
   border:1px solid rgba(126,232,210,.4);font-size:12px;line-height:1.5;display:none;white-space:nowrap}
@@ -102,7 +102,7 @@ renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
 renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
 renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.45;
 wrap.prepend(renderer.domElement);
-const scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x070c16,0.018);
+const scene=new THREE.Scene();scene.fog=new THREE.FogExp2(0x141415,0.018);
 const cam=new THREE.PerspectiveCamera(38,1,0.1,400);
 
 scene.add(new THREE.AmbientLight(0x8fa3cc,0.75));
