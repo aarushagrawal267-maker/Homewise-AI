@@ -7,8 +7,8 @@ from src.prediction import PropertyInputError
 from src.three_scenes import house_scene_html, house_spec
 from src.ui import (
     contribution_chips, dataset_record, footer, house_sub, inputs_from_record, load_explainer_cached,
-    load_finder_cached, md, note, page_header, price_card, property_form, property_picker, require_data,
-    require_engine, section, show_input_errors, three,
+    load_finder_cached, md, note, page_header, price_axis, price_card, price_scale, property_form, property_picker,
+    require_data, require_engine, section, show_input_errors, three,
 )
 from src.visualization import contribution_bar, money
 
@@ -70,7 +70,7 @@ if result is not None:
     c1, c2 = st.columns([1, 1.3], gap="large")
     with c1:
         md(contribution_chips(row, 4))
-        md(f'<p style="color:var(--ink-3);font-size:12.5px;margin-top:14px">The model starts from the average '
+        md(f'<p style="color:var(--ink-3);font-size:13px;margin-top:16px">The model starts from the average '
            f'training-home log price ({money(expl.base_price)}) and each characteristic moves it up or down. '
            'Contributions describe the model, not causal market effects.</p>')
         st.page_link("pages/3_Explainable_AI.py", label="Full explanation & waterfall", icon=":material/psychology:")
@@ -80,15 +80,22 @@ if result is not None:
     finder = load_finder_cached()
     section("Closest historical sales", "Real Ames sales most similar to this property (not live listings).")
     sim = finder.find(result.record, k=4, exclude_id=st.session_state.get("hw_base_id"))
+    lo, hi = result.interval.lower, result.interval.upper
+    a_lo, a_hi = price_axis(lo, hi)
+    axis = (min(a_lo, float(sim["SalePrice"].min()) * 0.96), max(a_hi, float(sim["SalePrice"].max()) * 1.04))
     cols = st.columns(4)
     for c, r in zip(cols, sim.itertuples()):
+        # Each sale is pinned on the same scale as this estimate's interval
         c.markdown(f'<div class="hw-kpi"><div class="k">#{r.Id} · {r.Neighborhood}</div>'
-                   f'<div class="v">{money(r.SalePrice)}</div><div class="s">Q{r.OverallQual} · '
-                   f'{r.GrLivArea:,} sq ft · built {r.YearBuilt}<br>similarity {r.similarity:.0f}/100</div></div>',
+                   f'<div class="v">{money(r.SalePrice)}</div>{price_scale(r.SalePrice, lo, hi, axis, mini=True)}'
+                   f'<div class="s">Q{r.OverallQual} · {r.GrLivArea:,} sq ft · built {r.YearBuilt}<br>'
+                   f'similarity {r.similarity:.0f}/100</div></div>',
                    unsafe_allow_html=True)
+    md('<p style="color:var(--ink-3);font-size:13px;margin-top:8px">Each pin is the recorded sale price; the band is '
+       'this estimate\'s prediction interval.</p>')
     st.write("")
     b1, b2, b3 = st.columns(3)
-    b1.page_link("pages/2_AI_Property_Insights.py", label="AI insights for this home", icon=":material/auto_awesome:")
+    b1.page_link("pages/2_AI_Property_Insights.py", label="AI insights for this home", icon=":material/query_stats:")
     b2.page_link("pages/6_Renovation_Simulator.py", label="Simulate renovations", icon=":material/construction:")
     b3.page_link("pages/7_Affordability_Explorer.py", label="Check affordability", icon=":material/account_balance_wallet:")
 footer()

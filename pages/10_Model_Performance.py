@@ -31,7 +31,7 @@ kpis([("Selected model", summary["best_model_label"], "lowest CV RMSLE"),
       ("Validation R²", f"{v['R2']:.4f}", f"RMSLE {v['RMSLE']:.4f} · MAPE {v['MAPE']:.1f}%"),
       ("Within ±10%", f"{summary['best_residuals']['share_within_10pct']:.0f}%",
        f"within ±20%: {summary['best_residuals']['share_within_20pct']:.0f}% of validation homes")], cols=3)
-md(f'<p style="color:var(--ink-3);font-size:12.5px;margin-top:10px">Run {summary["run_id"]} · trained '
+md(f'<p style="color:var(--ink-3);font-size:13px;margin-top:12px">Run {summary["run_id"]} · trained '
    f'{summary["trained_at"]} · {summary["split"]} · {summary["n_train"]} training rows after removing outlier Ids '
    f'{summary["removed_outliers_ids"]} · {summary["n_val"]} validation rows.</p>')
 
@@ -117,7 +117,7 @@ with tabs[3]:
     fig = go.Figure()
     for i, (mdl, g) in enumerate(abl.groupby("model")):
         fig.add_trace(go.Bar(x=g["configuration"], y=g["cv_rmsle_mean"], name=mdl, marker=dict(color=SERIES[i], cornerradius=4),
-                             error_y=dict(type="data", array=g["cv_rmsle_std"], color="#7D8BA1", thickness=1)))
+                             error_y=dict(type="data", array=g["cv_rmsle_std"], color="#85858B", thickness=1)))
     fig.update_layout(barmode="group")
     fig.update_yaxes(title="CV RMSLE (lower = better)", range=[abl["cv_rmsle_mean"].min() * 0.9, abl["cv_rmsle_mean"].max() * 1.04])
     st.plotly_chart(style(fig, "Feature-engineering ablation (5-fold CV on the training split)", height=420),

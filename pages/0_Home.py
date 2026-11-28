@@ -15,9 +15,8 @@ summary = report_json("training_summary.json")
 # ---------------------------------------------------------------- hero -----------------
 left, right = st.columns([1.0, 1.25], gap="large")
 with left:
-    md("""<div class="hw-anim" style="padding-top:28px"><span class="hw-eyebrow"><span class="hw-dot"></span>
-    Explainable property intelligence</span>
-    <div class="hw-hero-title">Understand what a home is <span class="hw-grad">really worth</span> — and why.</div>
+    md("""<div class="hw-anim" style="padding-top:32px"><span class="hw-eyebrow">Explainable property intelligence</span>
+    <div class="hw-hero-title">Understand what a home is really worth, and why</div>
     <p class="hw-hero-sub">HomeWise AI values a property with a cross-validated machine-learning ensemble, shows the
     range around the estimate, and breaks down exactly which characteristics drove it. Then lets you rotate, compare
     and re-imagine the home in 3D.</p></div>""")
@@ -26,7 +25,7 @@ with left:
                  width="stretch")
     b2.page_link("pages/6_Renovation_Simulator.py", label="Open the 3D simulator", icon=":material/view_in_ar:",
                  width="stretch")
-    md('<p style="color:var(--ink-3);font-size:13px;margin-top:14px">Trained on 1,460 real Ames, Iowa sales · '
+    md('<p class="hw-hero-meta">Trained on 1,460 real Ames, Iowa sales · '
        'Kaggle House Prices dataset · educational prototype</p>')
 
 with right:
@@ -69,11 +68,13 @@ cards = [
     ("chart", "Housing analytics", "Interactive market intelligence with filters, 3D market galaxy and data-driven insights."),
     ("flask", "AI experiment lab", "Configure and run your own models, tracked in an append-only experiment log."),
 ]
-for row in range(0, len(cards), 3):
-    cols = st.columns(3)
-    for c, (ic, t, d) in zip(cols, cards[row:row + 3]):
-        c.markdown(feature_card(ic, t, d), unsafe_allow_html=True)
-    st.write("")
+# The two core tools lead; the rest read as a ruled index rather than a grid of equal tiles.
+lead_a, lead_b = st.columns([1.4, 1], gap="medium")
+lead_a.markdown(feature_card(*cards[0], lead=True), unsafe_allow_html=True)
+lead_b.markdown(feature_card(*cards[1], lead=True), unsafe_allow_html=True)
+md('<div class="hw-index">' + "".join(
+    f'<div class="row"><span class="t">{t}</span><span class="d">{d}</span></div>' for _, t, d in cards[2:]
+) + '</div>')
 
 # ---------------------------------------------------------------- galaxy + importance -----
 if df is not None:
@@ -87,7 +88,7 @@ if df is not None:
         if shap_imp is not None:
             st.plotly_chart(importance_bar(shap_imp, "mean_abs_shap", "What the model relies on most", top=10,
                                            xtitle="Mean |SHAP| (log-price)"), width="stretch")
-            md('<p style="color:var(--ink-3);font-size:12.5px">Average absolute SHAP contribution on validation '
+            md('<p style="color:var(--ink-3);font-size:13px">Average absolute SHAP contribution on validation '
                'homes. These show what the model relies on, not proof that changing a feature causes price changes.</p>')
 
 # ---------------------------------------------------------------- workflow ----------------

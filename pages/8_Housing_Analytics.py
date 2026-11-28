@@ -111,7 +111,7 @@ with tabs[2]:
 
 with tabs[3]:
     three(market_galaxy_html(df), height=560)
-    md('<p style="color:var(--ink-3);font-size:12.5px">WebGL point cloud of the filtered sales: living area (x), '
+    md('<p style="color:var(--ink-3);font-size:13px">WebGL point cloud of the filtered sales: living area (x), '
        'year built (depth), sale price (height). Below: the same sales by living area × quality × price.</p>')
     st.plotly_chart(market_3d_scatter(df), width="stretch")
 
