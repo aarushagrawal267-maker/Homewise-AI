@@ -67,7 +67,12 @@ def dataset_status() -> dict[str, dict]:
     status = {}
     for name in ("train.csv", "test.csv", "data_description.txt"):
         p = PATHS.raw_data / name
-        entry = {"path": str(p), "exists": p.exists()}
+        # Project-relative, so saved reports do not leak the machine's absolute paths
+        try:
+            shown = p.relative_to(PATHS.root).as_posix()
+        except ValueError:
+            shown = p.name
+        entry = {"path": shown, "exists": p.exists()}
         if p.exists():
             entry["size_bytes"] = p.stat().st_size
             if name in EXPECTED_MD5:

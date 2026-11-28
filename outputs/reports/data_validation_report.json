@@ -441,21 +441,21 @@
   "ok": true,
   "files": {
     "train.csv": {
-      "path": "/home/user/Homewise-AI/data/raw/train.csv",
+      "path": "data/raw/train.csv",
       "exists": true,
       "size_bytes": 460676,
       "md5": "80ccab65fb115cbad143dbbd2bcd5577",
       "checksum_ok": true
     },
     "test.csv": {
-      "path": "/home/user/Homewise-AI/data/raw/test.csv",
+      "path": "data/raw/test.csv",
       "exists": true,
       "size_bytes": 451405,
       "md5": "dcec4b79bf9c7317bd9e17789bf888f0",
       "checksum_ok": true
     },
     "data_description.txt": {
-      "path": "/home/user/Homewise-AI/data/raw/data_description.txt",
+      "path": "data/raw/data_description.txt",
       "exists": false
     }
   }
