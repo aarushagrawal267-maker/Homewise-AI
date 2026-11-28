@@ -34,7 +34,7 @@ nav = st.navigation({
     ],
     "Valuation": [
         st.Page(P / "1_Property_Valuation.py", title="Property Valuation", icon=":material/price_check:"),
-        st.Page(P / "2_AI_Property_Insights.py", title="AI Property Insights", icon=":material/auto_awesome:"),
+        st.Page(P / "2_AI_Property_Insights.py", title="AI Property Insights", icon=":material/query_stats:"),
         st.Page(P / "3_Explainable_AI.py", title="Explainable AI", icon=":material/psychology:"),
     ],
     "Explore": [

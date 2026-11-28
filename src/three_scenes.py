@@ -52,10 +52,10 @@ canvas:active{cursor:grabbing}
 .tag.sm{padding:8px 12px}.tag.sm .l{font-size:11px}.tag.sm .p{font-size:17px}.tag.sm .s{font-size:11px}
 .legend{position:absolute;right:12px;bottom:12px;font-size:11px;color:#a1a1a6;background:rgba(20,20,21,.85);
   border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:7px 10px;line-height:1.6}
-@media(max-width:480px){.legend{top:12px;bottom:auto}.hint{display:none}}
+@media(max-width:480px){.hud{right:120px}}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:-1px}
-#tip{position:absolute;pointer-events:none;padding:8px 11px;border-radius:10px;background:rgba(10,18,32,.9);
-  border:1px solid rgba(126,232,210,.4);font-size:12px;line-height:1.5;display:none;white-space:nowrap}
+#tip{position:absolute;pointer-events:none;padding:8px 12px;border-radius:8px;background:rgba(20,20,21,.94);
+  border:1px solid rgba(237,237,237,.14);font-size:12px;line-height:1.5;display:none;white-space:nowrap}
 #err{position:absolute;inset:0;display:none;align-items:center;justify-content:center;text-align:center;
   padding:30px;color:#9FB0C8;font-size:14px}
 """
