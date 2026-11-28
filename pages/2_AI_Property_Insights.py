@@ -89,7 +89,7 @@ with c2:
     if surface:
         st.plotly_chart(price_surface_3d(surface, point={"x": float(rec["GrLivArea"]), "y": int(rec["OverallQual"]), "z": est},
                                          height=440), width="stretch")
-        md('<p style="color:var(--ink-3);font-size:12.5px">3D price surface: average model prediction across '
+        md('<p style="color:var(--ink-3);font-size:13px">3D price surface: average model prediction across '
            'training homes as living area and quality vary (partial dependence). Drag to rotate.</p>')
 
 section("Neighborhood context")

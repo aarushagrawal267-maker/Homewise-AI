@@ -31,7 +31,7 @@ kpis([("Selected model", summary["best_model_label"], "lowest CV RMSLE"),
       ("Validation R²", f"{v['R2']:.4f}", f"RMSLE {v['RMSLE']:.4f} · MAPE {v['MAPE']:.1f}%"),
       ("Within ±10%", f"{summary['best_residuals']['share_within_10pct']:.0f}%",
        f"within ±20%: {summary['best_residuals']['share_within_20pct']:.0f}% of validation homes")], cols=3)
-md(f'<p style="color:var(--ink-3);font-size:12.5px;margin-top:10px">Run {summary["run_id"]} · trained '
+md(f'<p style="color:var(--ink-3);font-size:13px;margin-top:12px">Run {summary["run_id"]} · trained '
    f'{summary["trained_at"]} · {summary["split"]} · {summary["n_train"]} training rows after removing outlier Ids '
    f'{summary["removed_outliers_ids"]} · {summary["n_val"]} validation rows.</p>')
 

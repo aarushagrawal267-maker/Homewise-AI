@@ -77,7 +77,7 @@ with tab2:
     else:
         st.plotly_chart(shap_beeswarm(shap_vals.drop(columns=["Id"]), shap_feat.drop(columns=["Id"]), top=16),
                         width="stretch")
-        md('<p style="color:var(--ink-3);font-size:12.5px">Each dot is one validation property. Position = how much '
+        md('<p style="color:var(--ink-3);font-size:13px">Each dot is one validation property. Position = how much '
            'that characteristic moved its predicted log price; colour = whether its value was high (blue) or low '
            '(orange) relative to other homes.</p>')
         c1, c2 = st.columns(2, gap="large")
@@ -99,7 +99,7 @@ with tab3:
         inputs, base, _ = current_property(engine)
         cur = engine.value(inputs, base=base).record.iloc[0][feat]
         st.plotly_chart(pdp_chart(pdps[feat], current=float(cur)), width="stretch")
-        md('<p style="color:var(--ink-3);font-size:12.5px">Thick line: average model prediction over 300 training '
+        md('<p style="color:var(--ink-3);font-size:13px">Thick line: average model prediction over 300 training '
            'homes when the characteristic is set to each value (related fields such as floor areas are kept '
            'consistent). Thin lines: individual homes (ICE). Dotted line: your latest property.</p>')
         note("Partial dependence shows how the model's output responds while other characteristics keep their "
@@ -113,6 +113,6 @@ with tab4:
         rr = r.record.iloc[0]
         st.plotly_chart(price_surface_3d(surface, point={"x": float(rr["GrLivArea"]), "y": int(rr["OverallQual"]),
                                                          "z": r.estimate}, height=640), width="stretch")
-        md('<p style="color:var(--ink-3);font-size:12.5px">Two-way partial dependence: average model prediction over '
+        md('<p style="color:var(--ink-3);font-size:13px">Two-way partial dependence: average model prediction over '
            '150 training homes for each living-area × quality combination. Drag to rotate; scroll to zoom.</p>')
 footer()

@@ -22,7 +22,7 @@ GRID = "rgba(255,255,255,0.06)"
 SERIES = ["#1FA592", "#3987E5", "#D06F1F", "#9085E9", "#D55181"]
 UP, DOWN = "#3987E5", "#D06F1F"
 TEAL_RAMP = [[0.0, "#0D2B33"], [0.25, "#0F4C4F"], [0.5, "#14806F"], [0.75, "#1FA592"], [1.0, "#7EE8D2"]]
-FONT = "Inter, 'Segoe UI', system-ui, sans-serif"
+FONT = "'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif"
 
 
 def money(v: float, short: bool = False) -> str:
@@ -49,7 +49,7 @@ def style(fig: go.Figure, title: str | None = None, legend: bool = True, height:
         showlegend=legend,
         legend=dict(orientation="h", yanchor="bottom", y=1.02, x=0, bgcolor="rgba(0,0,0,0)",
                     font=dict(color=INK_2)),
-        hoverlabel=dict(bgcolor="#111A2B", bordercolor="#24324A", font=dict(family=FONT, color=INK)),
+        hoverlabel=dict(bgcolor="#232325", bordercolor="#3a3a3d", font=dict(family=FONT, color=INK)),
         bargap=0.25,
     )
     fig.update_xaxes(gridcolor=GRID, zerolinecolor=GRID, linecolor="rgba(255,255,255,0.1)",

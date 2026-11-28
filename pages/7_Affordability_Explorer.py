@@ -63,7 +63,7 @@ with c2:
                               dict(range=[28, 36], color="rgba(57,135,229,.12)"),
                               dict(range=[36, 60], color="rgba(208,111,31,.14)")])))
         st.plotly_chart(style(fig, "Payment as % of income", legend=False, height=260), width="stretch")
-        md('<p style="color:var(--ink-3);font-size:12.5px">Bands at 28% and 36% are common rule-of-thumb reference '
+        md('<p style="color:var(--ink-3);font-size:13px">Bands at 28% and 36% are common rule-of-thumb reference '
            'points in US lending discussions, shown for orientation only; they are not an affordability verdict.</p>')
 
 if r.loan_amount > 0:

@@ -51,8 +51,8 @@ ICONS = {
 }
 
 
-def icon(name: str, size: int = 20, color: str = "currentColor") -> str:
-    return (f'<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="1.8" '
+def icon(name: str, size: int = 18, color: str = "currentColor") -> str:
+    return (f'<svg width="{size}" height="{size}" viewBox="0 0 24 24" fill="none" stroke="{color}" stroke-width="1.5" '
             f'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">{ICONS.get(name, ICONS["spark"])}</svg>')
 
 
@@ -72,7 +72,7 @@ def md(html_str: str) -> None:
 
 
 def page_header(eyebrow: str, title: str, subtitle: str = "") -> None:
-    md(f"""<div class="hw-page-head hw-anim"><span class="hw-eyebrow"><span class="hw-dot"></span>{eyebrow}</span>
+    md(f"""<div class="hw-page-head hw-anim"><span class="hw-eyebrow">{eyebrow}</span>
     <div class="hw-page-title">{title}</div><p class="hw-page-sub">{subtitle}</p></div>""")
 
 
@@ -92,9 +92,9 @@ def kpis(items: list[tuple[str, str, str]], cols: int | None = None) -> None:
             st.write("")
 
 
-def feature_card(icon_name: str, title: str, text: str) -> str:
-    return (f'<div class="hw-card hw-anim"><div class="hw-icon">{icon(icon_name)}</div>'
-            f'<h4>{title}</h4><p>{text}</p></div>')
+def feature_card(icon_name: str, title: str, text: str, lead: bool = False) -> str:
+    """A quiet text card. ``icon_name`` is kept for call-site compatibility; cards carry no icon tile."""
+    return f'<div class="hw-card{" lead" if lead else ""}"><h4>{title}</h4><p>{text}</p></div>'
 
 
 def note(text: str, kind: str = "warn") -> None:
@@ -103,24 +103,42 @@ def note(text: str, kind: str = "warn") -> None:
 
 
 def empty_state(title: str, text: str, icon_name: str = "cube") -> None:
-    md(f'<div class="hw-empty"><div class="hw-icon" style="margin:0 auto">{icon(icon_name)}</div>'
+    md(f'<div class="hw-empty"><div class="hw-empty-icon">{icon(icon_name, 24)}</div>'
        f'<h3>{title}</h3><p>{text}</p></div>')
+
+
+def price_axis(lower: float, upper: float) -> tuple[float, float]:
+    """The shared axis of the interval scale: the interval plus 8% margin on each side."""
+    return lower * 0.92, upper * 1.08
+
+
+def price_scale(value: float, lower: float, upper: float, axis: tuple[float, float] | None = None,
+                mini: bool = False) -> str:
+    """The signature: an interval band on a ruled scale with a single pin at ``value``."""
+    lo_axis, hi_axis = axis or price_axis(lower, upper)
+    span = (hi_axis - lo_axis) or 1.0
+
+    def pos(v: float) -> float:
+        return min(max((v - lo_axis) / span * 100, 0.0), 100.0)
+    left, right = pos(lower), pos(upper)
+    return (f'<div class="hw-scale{" mini" if mini else ""}" role="img" '
+            f'aria-label="{money(value)} on a range of {money(lower)} to {money(upper)}"><div class="rule"></div>'
+            f'<div class="band" style="left:{left:.1f}%;width:{right - left:.1f}%"></div>'
+            f'<div class="pin" style="left:{pos(value):.1f}%"></div></div>')
 
 
 def price_card(estimate: float, lower: float, upper: float, level: float, label: str = "Estimated value",
                caption: str = "") -> None:
-    lo_axis, hi_axis = lower * 0.92, upper * 1.08
+    lo_axis, hi_axis = price_axis(lower, upper)
     span = hi_axis - lo_axis
-    left = (lower - lo_axis) / span * 100
-    width = (upper - lower) / span * 100
-    pin = (estimate - lo_axis) / span * 100
+    left, right, pin = ((v - lo_axis) / span * 100 for v in (lower, upper, estimate))
     md(f"""<div class="hw-price hw-anim"><div class="lbl">{label}</div><div class="val">{money(estimate)}</div>
     <div class="rng">{level:.0%} prediction interval · {money(lower)} – {money(upper)}</div>
-    <div class="hw-bar"><div class="fill" style="left:{left:.1f}%;width:{width:.1f}%"></div>
-    <div class="pin" style="left:calc({pin:.1f}% - 2px)"></div></div>
-    <div class="hw-bar-labels"><span>{money(lower, True)}</span><span>±{(upper - lower) / 2 / estimate:.0%}</span>
-    <span>{money(upper, True)}</span></div>
-    {f'<div class="rng" style="margin-top:12px;font-size:12.5px">{caption}</div>' if caption else ''}</div>""")
+    {price_scale(estimate, lower, upper)}
+    <div class="hw-scale-labels at"><span style="left:{left:.1f}%">{money(lower, True)}</span>
+    <span class="mid" style="left:{pin:.1f}%">±{(upper - lower) / 2 / estimate:.0%}</span>
+    <span style="left:{right:.1f}%">{money(upper, True)}</span></div>
+    {f'<div class="cap">{caption}</div>' if caption else ''}</div>""")
 
 
 def contribution_chips(expl_row: pd.DataFrame, n: int = 4) -> str:
@@ -133,10 +151,8 @@ def contribution_chips(expl_row: pd.DataFrame, n: int = 4) -> str:
                 f'<b>{sign}{money(abs(r.dollar_contribution), True)}</b></span>')
     up = "".join(chip(r, "up") for r in pos.itertuples())
     down = "".join(chip(r, "down") for r in neg.itertuples())
-    return (f'<div style="margin:6px 0 2px;font-size:12px;color:var(--ink-3);letter-spacing:.08em;text-transform:uppercase">'
-            f'Raises the estimate</div>{up or "<span class=hw-chip>None</span>"}'
-            f'<div style="margin:12px 0 2px;font-size:12px;color:var(--ink-3);letter-spacing:.08em;text-transform:uppercase">'
-            f'Lowers the estimate</div>{down or "<span class=hw-chip>None</span>"}')
+    return (f'<div class="hw-chip-label">Raises the estimate</div>{up or "<span class=hw-chip>None</span>"}'
+            f'<div class="hw-chip-label next">Lowers the estimate</div>{down or "<span class=hw-chip>None</span>"}')
 
 
 def three(html_doc: str, height: int = 520) -> None:
@@ -354,7 +370,7 @@ def property_form(engine, defaults: dict, key: str, submit_label: str = "Estimat
 
 def show_input_errors(err) -> None:
     items = "".join(f"<li>{html.escape(e)}</li>" for e in err.errors)
-    md(f'<div class="hw-note">{icon("alert", 18)}<div><b>Please fix the following</b><ul style="margin:6px 0 0 18px;padding:0">{items}</ul></div></div>')
+    md(f'<div class="hw-note">{icon("alert", 18)}<div><b style="color:var(--ink)">Please fix the following</b><ul style="margin:6px 0 0 18px;padding:0">{items}</ul></div></div>')
 
 
 def house_sub(rec: pd.Series) -> str:
